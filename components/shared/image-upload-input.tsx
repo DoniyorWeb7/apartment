@@ -1,6 +1,7 @@
 // import React, { useState } from 'react';
 // import { Button } from '@/components/ui/button'; // Используем компонент кнопки из ShadCN
 
+import Image from 'next/image';
 import React from 'react';
 
 // interface Props {
@@ -109,11 +110,12 @@ export const ImageUploadInput: React.FC<Props> = ({ onSubmit }) => {
           <div className="grid grid-cols-3 gap-3">
             {images.map((image, index) => (
               <div key={index} className="relative group">
-                <img
+                <Image
                   src={URL.createObjectURL(image)}
                   alt={`Preview ${index}`}
-                  className="w-full h-32 object-cover rounded-lg border-2 
-                    ${cover?.name === image.name ? 'border-blue-500' : 'border-transparent'}"
+                  fill
+                  className={`w-full h-32 object-cover rounded-lg border-2 
+                    ${cover?.name === image.name ? 'border-blue-500' : 'border-transparent'}`}
                 />
                 <button
                   type="button"

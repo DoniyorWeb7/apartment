@@ -2,8 +2,6 @@
 import { cn } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 import React from 'react';
-import { Button } from '../ui/button';
-import { signOut } from 'next-auth/react';
 import { LogoutButton } from './logout-button';
 interface Props {
   className?: string;

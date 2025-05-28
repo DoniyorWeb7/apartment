@@ -2,10 +2,11 @@ import { prisma } from '@/prisma/prisma-client';
 import { hash } from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const user = await prisma.user.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: Number(id) },
     });
 
     if (!user) {
@@ -19,20 +20,22 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
   try {
-    const userId = parseInt(params.id, 10);
+    const userId = parseInt(id, 10);
     if (isNaN(userId)) {
       return NextResponse.json({ error: 'Некорректный ID' }, { status: 400 });
     }
 
-    const relatedCount = await prisma.owner.count({ where: { userId } });
-    if (relatedCount > 0) {
-      return NextResponse.json(
-        { error: 'Невозможно удалить пользователя: есть связанные записи.' },
-        { status: 400 },
-      );
-    }
+    // // const relatedCount = await prisma.owner.count({ where: { userId } });
+    // if (relatedCount > 0) {
+    //   return NextResponse.json(
+    //     { error: 'Невозможно удалить пользователя: есть связанные записи.' },
+    //     { status: 400 },
+    //   );
+    // }
 
     await prisma.user.delete({ where: { id: userId } });
 
@@ -43,9 +46,11 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
   try {
-    const userId = Number(params.id);
+    const userId = Number(id);
     const body = await req.json();
     const updateUser = await prisma.user.update({
       where: { id: userId },

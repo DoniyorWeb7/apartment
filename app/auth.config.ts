@@ -2,10 +2,13 @@ import { prisma } from '@/prisma/prisma-client';
 // import { NextAuthConfig } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { SessionStrategy } from 'next-auth';
+import { NextAuthOptions, Session, SessionStrategy } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
+// import { User } from '@prisma/client';
 const JWT_SECRET = process.env.NEXTAUTH_SECRET;
 console.log(JWT_SECRET);
-export const authConfig = {
+
+export const authConfig: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -15,6 +18,10 @@ export const authConfig = {
       },
       async authorize(credentials) {
         console.log(credentials);
+        if (!credentials) {
+          // Например, возвращаем null, если credentials нет
+          return null;
+        }
         try {
           const user = await prisma.user.findFirst({
             where: { username: credentials.username as string },
@@ -49,7 +56,7 @@ export const authConfig = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         session.user.name = token.name;
         session.user.role = token.role as string;

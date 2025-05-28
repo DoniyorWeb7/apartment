@@ -31,14 +31,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '../ui/dialog';
 import { User } from '@prisma/client';
 import { Api } from '@/services/api-client';
 import { CreateUserModal } from './create-user-modal';
@@ -47,6 +39,11 @@ import { deleteUser } from '@/services/user-delete';
 import { userUpdate } from '@/services/user-update';
 import { UserEditDialog } from './user-edit-btn';
 import toast from 'react-hot-toast';
+
+export interface CustomColumnMeta {
+  filterVariant?: 'text' | 'select' | 'date';
+  options?: { label: string; value: string }[];
+}
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -226,8 +223,8 @@ export function UsersTable() {
 
             <TableRow>
               {table.getAllLeafColumns().map((column) => {
-                const filterVariant = (column.columnDef.meta as any)?.filterVariant;
-                const options = (column.columnDef.meta as any)?.options ?? [];
+                const filterVariant = (column.columnDef.meta as CustomColumnMeta)?.filterVariant;
+                const options = (column.columnDef.meta as CustomColumnMeta)?.options ?? [];
                 return (
                   <TableHead key={column.id}>
                     {column.getCanFilter() ? (
@@ -237,9 +234,9 @@ export function UsersTable() {
                           value={(column.getFilterValue() as string) ?? ''}
                           onChange={(e) => column.setFilterValue(e.target.value)}>
                           <option value="">Все</option>
-                          {options.map((opt: string) => (
-                            <option key={opt} value={opt}>
-                              {opt}
+                          {options.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
                             </option>
                           ))}
                         </select>

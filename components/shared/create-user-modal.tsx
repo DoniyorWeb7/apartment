@@ -187,14 +187,16 @@ export const CreateUserModal: React.FC<Props> = ({ onUserAdded }) => {
             <DateInput
               date={watch('availabilityPas')}
               setDate={(date) => {
-                setValue('availabilityPas', date, { shouldValidate: true });
+                // Обрабатываем случай, когда date - это функция (SetStateAction)
+                const newDate = typeof date === 'function' ? date(watch('availabilityPas')) : date;
+                setValue('availabilityPas', newDate, { shouldValidate: true });
               }}
             />
             {errors.availabilityPas && (
               <p className="text-sm text-red-500 mt-1">{errors.availabilityPas.message}</p>
             )}
 
-            <Button type="submit">Save changes</Button>
+            <Button type="submit">{isLoading ? 'Сохраняется' : 'Сохранить'}</Button>
           </form>
         </div>
         <DialogFooter></DialogFooter>

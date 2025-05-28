@@ -54,13 +54,22 @@ export type Payment = {
   };
 };
 
+type ApartmentWithUser = Apartment & {
+  user?: User; // Make it optional if it might not always be present
+};
+
+export interface CustomColumnMeta {
+  filterVariant?: 'text' | 'select' | 'date';
+  options?: { label: string; value: string }[];
+}
+
 export function ApartTable() {
-  const [apart, setApart] = React.useState<Apartment[]>([]);
+  const [apart, setApart] = React.useState<ApartmentWithUser[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [selectedApartment, setSelectedApartment] = React.useState<Apartment | null>(null);
+  const [selectedApartment, setSelectedApartment] = React.useState<ApartmentWithUser | null>(null);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [userOptions, setUserOptions] = React.useState<User[]>([]);
   const statusOptions = [
@@ -80,7 +89,7 @@ export function ApartTable() {
   React.useEffect(() => {
     fetchUsers();
   }, []);
-  const columns: ColumnDef<Apartment>[] = [
+  const columns: ColumnDef<ApartmentWithUser>[] = [
     {
       accessorKey: 'id',
       header: 'ID',
@@ -285,8 +294,8 @@ export function ApartTable() {
 
             <TableRow>
               {table.getAllLeafColumns().map((column) => {
-                const filterVariant = (column.columnDef.meta as any)?.filterVariant;
-                const options = (column.columnDef.meta as any)?.options ?? [];
+                const filterVariant = (column.columnDef.meta as CustomColumnMeta)?.filterVariant;
+                const options = (column.columnDef.meta as CustomColumnMeta)?.options ?? [];
                 const imageInputHide = column.columnDef.header;
                 return (
                   <TableHead key={column.id}>
@@ -297,9 +306,9 @@ export function ApartTable() {
                           value={(column.getFilterValue() as string) ?? ''}
                           onChange={(e) => column.setFilterValue(e.target.value)}>
                           <option value="">Все</option>
-                          {options.map((opt: string) => (
-                            <option key={opt} value={opt}>
-                              {opt}
+                          {options.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
                             </option>
                           ))}
                         </select>

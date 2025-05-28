@@ -16,11 +16,6 @@ export const PreviewGallery = ({ images }: Props) => {
   const [open, setOpen] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
 
-  const galleryItems = images.map((url) => ({
-    original: url,
-    thumbnail: url,
-  }));
-
   const handleClick = (index: number) => {
     setStartIndex(index);
     setOpen(true);

@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { SelectInput } from './select-input';
-import { CreateCheckbox } from './create-checkbox';
 import { Textarea } from '../ui/textarea';
 import { ImageUploadInput } from './image-upload-input';
 import { DateInput } from './date-input';

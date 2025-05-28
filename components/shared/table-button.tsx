@@ -7,7 +7,7 @@ interface Props {
   className?: string;
 }
 
-export const TableButton: React.FC<Props> = ({ className }) => {
+export const TableButton: React.FC<Props> = () => {
   const { data: session } = useSession();
   return (
     <div className="flex gap-2">
