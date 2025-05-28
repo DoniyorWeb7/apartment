@@ -8,6 +8,7 @@
     "start": "next start",
     "prisma:push": "prisma db push",
     "prisma:seed": "prisma db seed",
+    "postinstall": "prisma generate",
     "lint": "next lint"
   },
   "prisma": {
