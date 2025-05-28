@@ -1,0 +1,64 @@
+import { prisma } from '@/prisma/prisma-client';
+import { hash } from 'bcryptjs';
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(_req: Request, { params }: { params: { id: string } }) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: Number(params.id) },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'Пользователь не найден' }, { status: 404 });
+    }
+
+    return NextResponse.json(user, { status: 200 });
+  } catch (error) {
+    console.error('Ошибка при получении пользователя:', error);
+    return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
+  }
+}
+
+export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  try {
+    const userId = parseInt(params.id, 10);
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: 'Некорректный ID' }, { status: 400 });
+    }
+
+    const relatedCount = await prisma.owner.count({ where: { userId } });
+    if (relatedCount > 0) {
+      return NextResponse.json(
+        { error: 'Невозможно удалить пользователя: есть связанные записи.' },
+        { status: 400 },
+      );
+    }
+
+    await prisma.user.delete({ where: { id: userId } });
+
+    return NextResponse.json({ message: 'Пользователь удалён' });
+  } catch (error) {
+    console.error('Ошибка при удалении пользователя:', error);
+    return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const userId = Number(params.id);
+    const body = await req.json();
+    const updateUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        username: body.username,
+        fullName: body.fullName,
+        phone: body.phone,
+        passport: body.passport,
+        ...(body.password && { password: await hash(body.password, 10) }),
+      },
+    });
+    return NextResponse.json(updateUser);
+  } catch {
+    return NextResponse.json({ error: 'Ошибка при обновлении пользователя' }, { status: 500 });
+  }
+}
