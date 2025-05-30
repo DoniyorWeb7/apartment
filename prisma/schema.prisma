@@ -38,9 +38,9 @@ model Apartment {
   square       Int
   variant      String
   description  String
-
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
+  owner        String
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int
 
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt

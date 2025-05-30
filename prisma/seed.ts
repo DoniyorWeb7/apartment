@@ -1,6 +1,5 @@
 import { hashSync } from 'bcrypt';
 import { prisma } from './prisma-client';
-import { apartment, owner } from './constants';
 
 async function up() {
   await prisma.user.createMany({

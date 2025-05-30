@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Keyboard } from 'swiper/modules';
 import { useState } from 'react';
@@ -41,6 +41,7 @@ export const PreviewGallery = ({ images }: Props) => {
       {/* Модальное окно */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden">
+          <DialogTitle></DialogTitle>
           <Swiper
             initialSlide={startIndex}
             navigation

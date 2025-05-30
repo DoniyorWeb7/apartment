@@ -20,6 +20,7 @@ import { FormInputBlock } from './form-input-block';
 import { ApartCreate } from '@/services/apartments';
 import { User } from '@prisma/client';
 import { Api } from '@/services/api-client';
+import toast from 'react-hot-toast';
 
 interface Props {
   className?: string;
@@ -45,7 +46,7 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
   const [cover, setCover] = React.useState<File | null>(null);
   const [date, setDate] = React.useState<Date>();
   const [username, setUsername] = React.useState<User[]>([]);
-
+  const [isLoading, setIsLoading] = React.useState(false);
   const fetchUsers = async () => {
     try {
       const users = await Api.users.getAll();
@@ -91,6 +92,7 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
     formData.append('availability', date ? date.toISOString() : new Date().toISOString());
     formData.append('price', String(data.price ?? 0));
     formData.append('district', data.district || '');
+    formData.append('owner', data.owner || '');
     formData.append('adress', data.adress || '');
     formData.append('room', String(data.room || ''));
     formData.append('floor', String(data.floor || ''));
@@ -109,44 +111,16 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
     });
 
     try {
+      setIsLoading(true);
       const res = await ApartCreate.create(formData);
-      alert('Квартира успешно создана! ID: ' + res.data.id);
+      toast.success('Квартира успешно создана! ID: ' + res.data.id);
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
-      alert('Ошибка при отправке данных');
+      toast.error('Ошибка при отправке данных');
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  // const onSubmit: SubmitHandler<MyForm> = async (data) => {э
-  //   const formData = new FormData();
-  //   formData.append('status', data.status || 'Активна');
-  //   formData.append('availability', date ? date.toISOString() : new Date().toISOString());
-  //   formData.append('price', String(data.price ?? 0));
-  //   formData.append('district', data.district || '');
-  //   formData.append('room', String(data.room || ''));
-  //   formData.append('floor', String(data.floor || ''));
-  //   formData.append('floorBuild', String(data.floorBuild || ''));
-  //   formData.append('square', String(data.square || ''));
-  //   formData.append('variant', String(data.variant || ''));
-  //   formData.append('description', data.description || '');
-  //   console.log('Отправляем images:', images);
-  //   console.log('Отправляем cover:', cover);
-  //   if (cover) {
-  //     formData.append('cover', cover.name);
-  //   }
-
-  //   images.forEach((image) => {
-  //     formData.append('images', image); // Ключ 'images' несколько раз для каждого файла
-  //   });
-  //   try {
-  //     const res = await ApartCreate.create(formData);
-  //     alert('Квартира успешно создана! ID: ' + res.data.id);
-  //   } catch (error) {
-  //     console.error('Ошибка при отправке формы:', error);
-  //     alert('Ошибка при отправке данных');
-  //   }
-  //   console.log({ ...data, images, cover, date });
-  // };
 
   const handleImageData = (imgs: File[], coverImage: File | null) => {
     setImages(imgs);
@@ -177,8 +151,8 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
   ];
 
   const statusOptions = [
-    { label: 'Занят', value: '1' },
-    { label: 'Свободен', value: '2' },
+    { label: 'Занят', value: 'Занят' },
+    { label: 'Свободен', value: 'Свободен' },
   ];
 
   return (
@@ -373,7 +347,11 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
             <DateInput date={date} setDate={setDate} />
             <ImageUploadInput onSubmit={handleImageData} />
 
-            <Button type="submit">Save changes</Button>
+            <Button
+              className={isLoading ? 'bg-gray-500 hover:bg-gray-500 pointer-events-none' : ''}
+              type="submit">
+              {isLoading ? 'Сохрянается' : 'Сохранить'}
+            </Button>
           </form>
         </div>
         <DialogFooter></DialogFooter>

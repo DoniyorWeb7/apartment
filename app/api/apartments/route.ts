@@ -156,6 +156,7 @@ export async function POST(req: Request) {
       availability: new Date(formData.get('availability') as string),
       price: Number(formData.get('price')),
       district: formData.get('district') as string,
+      owner: formData.get('owner') as string,
       adress: formData.get('adress') as string,
       room: Number(formData.get('room')),
       floor: Number(formData.get('floor')),

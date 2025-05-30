@@ -1,69 +1,5 @@
-// import React, { useState } from 'react';
-// import { Button } from '@/components/ui/button'; // Используем компонент кнопки из ShadCN
-
-import Image from 'next/image';
+/* eslint-disable @next/next/no-img-element */
 import React from 'react';
-
-// interface Props {
-//   onSubmit: (images: File[], cover: File | null) => void;
-//   className?: string;
-// }
-// export const ImageUploadInput: React.FC<Props> = ({ onSubmit }) => {
-//   const [images, setImages] = useState<File[]>([]); // Все загруженные изображения
-//   const [cover, setCover] = useState<File | null>(null); // Изображение обложки
-
-//   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     if (event.target.files) {
-//       const files = Array.from(event.target.files);
-//       setImages(files);
-//       onSubmit(files, cover);
-//     }
-//   };
-
-//   const handleCoverChange = (image: File) => {
-//     setCover(image);
-//     onSubmit(images, image);
-//   };
-
-//   return (
-//     <>
-//       <div className="mb-4">
-//         <label htmlFor="image-upload" className="block mb-2">
-//           Загрузите изображения
-//         </label>
-//         <input
-//           type="file"
-//           id="image-upload"
-//           accept="image/*"
-//           multiple
-//           onChange={handleImageChange}
-//           className="w-full"
-//         />
-//       </div>
-
-//       <div className="mb-4">
-//         <p>Выберите обложку:</p>
-//         <div className="grid grid-cols-3 gap-4">
-//           {images.map((image, index) => (
-//             <div key={index} className="relative">
-//               <img
-//                 src={URL.createObjectURL(image)}
-//                 alt={`preview-${index}`}
-//                 className="w-full h-32 object-cover rounded"
-//               />
-//               <Button
-//                 variant={cover === image ? 'default' : 'outline'}
-//                 onClick={() => handleCoverChange(image)}
-//                 className="absolute bottom-2 right-2">
-//                 {cover === image ? 'Обложка' : 'Выбрать'}
-//               </Button>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
 
 interface Props {
   onSubmit: (images: File[], cover: File | null) => void;
@@ -110,12 +46,19 @@ export const ImageUploadInput: React.FC<Props> = ({ onSubmit }) => {
           <div className="grid grid-cols-3 gap-3">
             {images.map((image, index) => (
               <div key={index} className="relative group">
-                <Image
+                {/* <Image
                   src={URL.createObjectURL(image)}
                   alt={`Preview ${index}`}
                   fill
                   className={`w-full h-32 object-cover rounded-lg border-2 
                     ${cover?.name === image.name ? 'border-blue-500' : 'border-transparent'}`}
+                /> */}
+
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt={`Preview ${index}`}
+                  className={`w-full h-32 object-cover rounded-lg border-2 
+                  ${cover?.name === image.name ? 'border-blue-500' : 'border-transparent'}`}
                 />
                 <button
                   type="button"

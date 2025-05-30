@@ -32,11 +32,10 @@ import {
 } from '@/components/ui/table';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '../ui/dialog';
 import { Apartment, User } from '@prisma/client';
 import { Api } from '@/services/api-client';
 import { TableButton } from './table-button';
-import { PreviewGallery } from './apartment-gallery';
+import { RowWithDialog } from './row-with-dialog';
 
 export type Payment = {
   id: string;
@@ -54,7 +53,7 @@ export type Payment = {
   };
 };
 
-type ApartmentWithUser = Apartment & {
+export type ApartmentWithUser = Apartment & {
   user?: User; // Make it optional if it might not always be present
 };
 
@@ -69,12 +68,10 @@ export function ApartTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [selectedApartment, setSelectedApartment] = React.useState<ApartmentWithUser | null>(null);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
   const [userOptions, setUserOptions] = React.useState<User[]>([]);
   const statusOptions = [
-    { label: 'Занят', value: '1' },
-    { label: 'Свободен', value: '2' },
+    { label: 'Занят', value: 'Занят' },
+    { label: 'Свободен', value: 'Свободен' },
   ];
   const fetchUsers = async () => {
     try {
@@ -95,6 +92,10 @@ export function ApartTable() {
       header: 'ID',
       meta: { filterVariant: 'text' },
       cell: ({ row }) => <div className="uppercase">{row.getValue('id')}</div>,
+      filterFn: (row, id, value) => {
+        const val = row.getValue(id);
+        return String(val).includes(String(value));
+      },
     },
     {
       accessorKey: 'status',
@@ -105,9 +106,10 @@ export function ApartTable() {
 
         const statusLabel =
           statusOptions.find((option) => option.value === statusValue)?.label ?? '—';
+
         const statusColorMap: Record<string, string> = {
-          '1': 'bg-red-500',
-          '2': 'bg-green-500',
+          Занят: 'bg-red-500',
+          Свободен: 'bg-green-500',
         };
         return (
           <div
@@ -149,6 +151,10 @@ export function ApartTable() {
         const formatted = new Intl.DateTimeFormat('ru-RU').format(new Date(value));
         return <div className="capitalize">{formatted}</div>;
       },
+      filterFn: (row, id, value) => {
+        const rowDate = new Date(row.getValue(id)).toLocaleDateString('ru-RU');
+        return rowDate.includes(value);
+      },
     },
     {
       accessorKey: 'price',
@@ -164,23 +170,27 @@ export function ApartTable() {
 
         return <div className="text-font-medium">{formatted}</div>;
       },
+      filterFn: (row, id, value) => {
+        const rowValue = row.getValue(id);
+        return String(rowValue).includes(String(value)); // Приводим к строке
+      },
     },
     {
       accessorKey: 'district',
       meta: {
         filterVariant: 'select',
         options: [
-          'Алмазарский район',
-          'Бектемирский район',
-          'Мирабадский район',
-          'Мирзо-Улугбекский район',
-          'Сергелийский район',
-          'Чиланзарский район',
-          'Шайхантаурский район',
-          'Юнусабадский район',
-          'Яккасарайский район',
-          'Яшнабадский район',
-          'Учтепинский район',
+          { label: 'Алмазарский район', value: 'Алмазарский район' },
+          { label: 'Бектемирский район', value: 'Бектемирский район' },
+          { label: 'Мирабадский район', value: 'Мирабадский район' },
+          { label: 'Мирзо-Улугбекский район', value: 'Мирзо-Улугбекский район' },
+          { label: 'Сергелийский район', value: 'Сергелийский район' },
+          { label: 'Чиланзарский район', value: 'Чиланзарский район' },
+          { label: 'Шайхантаурский район', value: 'Шайхантаурский район' },
+          { label: 'Юнусабадский район', value: 'Юнусабадский район' },
+          { label: 'Яккасарайский район', Value: 'Яккасарайский район' },
+          { label: 'Яшнабадский район', value: 'Яшнабадский район' },
+          { label: 'Учтепинский район', value: 'Учтепинский район' },
         ],
       },
       header: 'Район',
@@ -197,16 +207,30 @@ export function ApartTable() {
       meta: { filterVariant: 'text' },
       header: 'Комнаты',
       cell: ({ row }) => <div className="capitalize">{row.getValue('room')}</div>,
+      filterFn: (row, id, value) => {
+        const val = row.getValue(id);
+        return String(val).includes(String(value));
+      },
     },
     {
       accessorKey: 'floor',
       meta: { filterVariant: 'number' },
       header: 'Этаж',
       cell: ({ row }) => <div className="capitalize">{row.getValue('floor')}</div>,
+      filterFn: (row, id, value) => {
+        const val = row.getValue(id);
+        return String(val).includes(String(value));
+      },
     },
     {
       accessorKey: 'user.username',
-      meta: { filterVariant: 'select', options: userOptions.map((u) => u.username) },
+      meta: {
+        filterVariant: 'select',
+        options: userOptions.map((user) => ({
+          label: user.username,
+          value: user.username,
+        })),
+      },
       header: 'Сотрудник',
       cell: ({ row }) => <div className="capitalize">{row.original.user?.username ?? '—'}</div>,
     },
@@ -214,7 +238,10 @@ export function ApartTable() {
     {
       id: 'actions',
       enableHiding: false,
-      cell: () => <TableButton />,
+      cell: ({ row }) => {
+        const apart = row.original;
+        return <TableButton apart={apart} apartId={apart.id} />;
+      },
     },
   ];
   React.useEffect(() => {
@@ -307,7 +334,7 @@ export function ApartTable() {
                           onChange={(e) => column.setFilterValue(e.target.value)}>
                           <option value="">Все</option>
                           {options.map((opt) => (
-                            <option key={opt.value} value={opt.value}>
+                            <option key={opt.label} value={opt.value}>
                               {opt.label}
                             </option>
                           ))}
@@ -333,117 +360,118 @@ export function ApartTable() {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <Dialog key={row.id} open={dialogOpen} onOpenChange={setDialogOpen}>
-                  <DialogTrigger asChild>
-                    <TableRow
-                      onClick={() => {
-                        setSelectedApartment(row.original);
-                        setDialogOpen(true);
-                      }}
-                      className="cursor-pointer"
-                      data-state={row.getIsSelected() && 'selected'}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      {selectedApartment && (
-                        <div className="space-y-2 overflow-auto h-[600px]">
-                          <div className="flex flex-wrap">
-                            {/* {(selectedApartment.images as string[])?.map((image, index) => (
-                              <Image
-                                width={300}
-                                height={200}
-                                className="rounded-md object-cover"
-                                key={index}
-                                src={image}
-                                alt={`Apartment image ${index + 1}`}
-                              />
-                            ))} */}
-                            <PreviewGallery images={selectedApartment.images as string[]} />
-                          </div>
-                          <p>
-                            ID: <strong> {selectedApartment.id}</strong>
-                          </p>
-                          <p>
-                            Сотрудник:
-                            <strong> {selectedApartment.userId}</strong>
-                          </p>
-                          <hr />
-                          <p className="mb-1">
-                            <strong>Расположения:</strong>
-                          </p>
-                          <p>
-                            Район: <strong> {selectedApartment.district}</strong>
-                          </p>
-                          <p>
-                            Адрес: <strong> {selectedApartment.adress}</strong>
-                          </p>
-                          <hr />
-                          <strong>Информации о квартиры:</strong>
-                          <p>
-                            Комнат: <strong> {selectedApartment.room}</strong>
-                          </p>
-                          <p>
-                            Этаж: <strong> {selectedApartment.floor}</strong>
-                          </p>
-                          <p>
-                            Этажнось:
-                            <strong> {selectedApartment.floorBuild}</strong>
-                          </p>
-                          <p>
-                            Площадь: <strong> {selectedApartment.square}</strong>
-                          </p>
-                          <hr />
-                          <strong>Способ оплаты:</strong>
-                          <p>
-                            Предоплата:
-                            <strong> {selectedApartment.variant === '1' ? 'Да' : 'Нет'}</strong>
-                          </p>
-                          <p>
-                            Депозит:
-                            <strong> {selectedApartment.variant === '2' ? 'Да' : 'Нет'}</strong>
-                          </p>
-                          <p>
-                            Цена: <strong> ${selectedApartment.price}</strong>
-                          </p>
-                          <hr />
-                          <p>
-                            Доступно с:
-                            <strong>
-                              {'' + new Date(selectedApartment.availability).toLocaleDateString()}
-                            </strong>
-                          </p>
-                          <p>
-                            Дата обновления:
-                            <strong>
-                              {'' + new Date(selectedApartment.updateAt).toLocaleDateString()}
-                            </strong>
-                          </p>
-                          <p>
-                            Дата создания:
-                            <strong>
-                              {'' + new Date(selectedApartment.createAt).toLocaleDateString()}
-                            </strong>
-                          </p>
-                          <hr />
-                          <p>
-                            Описание:
-                            <strong>{selectedApartment.description}</strong>
-                          </p>
-                        </div>
-                      )}
-                    </DialogHeader>
+                // <Dialog key={row.id} open={dialogOpen} onOpenChange={setDialogOpen}>
+                //   <DialogTrigger asChild>
+                //     <TableRow
+                //       onClick={() => {
+                //         setSelectedApartment(row.original);
+                //         setDialogOpen(true);
+                //       }}
+                //       className="cursor-pointer"
+                //       data-state={row.getIsSelected() && 'selected'}>
+                //       {row.getVisibleCells().map((cell) => (
+                //         <TableCell key={cell.id}>
+                //           {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                //         </TableCell>
+                //       ))}
+                //     </TableRow>
+                //   </DialogTrigger>
+                //   <DialogContent className="sm:max-w-[425px]">
+                //     <DialogHeader>
+                //       {selectedApartment && (
+                //         <div className="space-y-2 overflow-auto h-[600px]">
+                //           <div className="flex flex-wrap">
+                //             {/* {(selectedApartment.images as string[])?.map((image, index) => (
+                //               <Image
+                //                 width={300}
+                //                 height={200}
+                //                 className="rounded-md object-cover"
+                //                 key={index}
+                //                 src={image}
+                //                 alt={`Apartment image ${index + 1}`}
+                //               />
+                //             ))} */}
+                //             <PreviewGallery images={selectedApartment.images as string[]} />
+                //           </div>
+                //           <p>
+                //             ID: <strong> {selectedApartment.id}</strong>
+                //           </p>
+                //           <p>
+                //             Сотрудник:
+                //             <strong> {selectedApartment.userId}</strong>
+                //           </p>
+                //           <hr />
+                //           <p className="mb-1">
+                //             <strong>Расположения:</strong>
+                //           </p>
+                //           <p>
+                //             Район: <strong> {selectedApartment.district}</strong>
+                //           </p>
+                //           <p>
+                //             Адрес: <strong> {selectedApartment.adress}</strong>
+                //           </p>
+                //           <hr />
+                //           <strong>Информации о квартиры:</strong>
+                //           <p>
+                //             Комнат: <strong> {selectedApartment.room}</strong>
+                //           </p>
+                //           <p>
+                //             Этаж: <strong> {selectedApartment.floor}</strong>
+                //           </p>
+                //           <p>
+                //             Этажнось:
+                //             <strong> {selectedApartment.floorBuild}</strong>
+                //           </p>
+                //           <p>
+                //             Площадь: <strong> {selectedApartment.square}</strong>
+                //           </p>
+                //           <hr />
+                //           <strong>Способ оплаты:</strong>
+                //           <p>
+                //             Предоплата:
+                //             <strong> {selectedApartment.variant === '1' ? 'Да' : 'Нет'}</strong>
+                //           </p>
+                //           <p>
+                //             Депозит:
+                //             <strong> {selectedApartment.variant === '2' ? 'Да' : 'Нет'}</strong>
+                //           </p>
+                //           <p>
+                //             Цена: <strong> ${selectedApartment.price}</strong>
+                //           </p>
+                //           <hr />
+                //           <p>
+                //             Доступно с:
+                //             <strong>
+                //               {'' + new Date(selectedApartment.availability).toLocaleDateString()}
+                //             </strong>
+                //           </p>
+                //           <p>
+                //             Дата обновления:
+                //             <strong>
+                //               {'' + new Date(selectedApartment.updateAt).toLocaleDateString()}
+                //             </strong>
+                //           </p>
+                //           <p>
+                //             Дата создания:
+                //             <strong>
+                //               {'' + new Date(selectedApartment.createAt).toLocaleDateString()}
+                //             </strong>
+                //           </p>
+                //           <hr />
+                //           <p>
+                //             Описание:
+                //             <strong>{selectedApartment.description}</strong>
+                //           </p>
+                //         </div>
+                //       )}
+                //     </DialogHeader>
 
-                    <DialogFooter>
-                      <Button type="submit">Save changes</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                //     <DialogFooter>
+                //       <Button type="submit">Save changes</Button>
+                //     </DialogFooter>
+                //   </DialogContent>
+                // </Dialog>
+                <RowWithDialog key={row.id} row={row} />
               ))
             ) : (
               <TableRow>
