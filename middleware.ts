@@ -17,13 +17,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/unauthorized', request.url));
   }
 
-  // if (isAuth && isLoginPage) {
-  //   return NextResponse.redirect(new URL('/admin', request.url));
-  // }
   if (isAuth && isLoginPage) {
-    const destination = token?.role === 'ADMIN' ? '/admin' : '/';
-    return NextResponse.redirect(new URL(destination, request.url));
+    return NextResponse.redirect(new URL('/admin', request.url));
   }
+  // if (isAuth && isLoginPage) {
+  //   const destination = token?.role === 'ADMIN' ? '/admin' : '/';
+  //   return NextResponse.redirect(new URL(destination, request.url));
+  // }
 
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
   if (isAdminRoute && token?.role !== 'ADMIN') {

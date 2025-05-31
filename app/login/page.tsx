@@ -37,7 +37,7 @@ export default function LoginPage() {
       }
 
       if (res?.url) {
-        router.push(res.url);
+        window.location.href = '/admin';
       } else {
         router.push('/admin');
       }
