@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const apartment = await prisma.apartment.findMany({
+  const apartment = await prisma.saleApartment.findMany({
     include: {
       user: true,
     },
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     const coverFile = formData.get('cover') as File | null;
 
     const imageUploadPromises = imagesFiles.map(async (file) => {
-      const blob = await put(`apartments/${Date.now()}-${file.name}`, file, {
+      const blob = await put(`saleApartments/${Date.now()}-${file.name}`, file, {
         access: 'public',
       });
       return {
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     const hasCover = images.some((img) => img.isCover);
     if (!hasCover && coverFile) {
       // Если обложка не найдена, но была выбрана
-      const coverBlob = await put(`apartments/${Date.now()}-${coverFile.name}`, coverFile, {
+      const coverBlob = await put(`saleApartments/cover-${Date.now()}`, coverFile, {
         access: 'public',
       });
       images.push({
@@ -85,7 +85,7 @@ export async function POST(req: Request) {
     };
 
     // Создаем квартиру в базе данных
-    const newApartment = await prisma.apartment.create({
+    const newApartment = await prisma.saleApartment.create({
       data: {
         ...fields,
         images: images.map((img) => img.url),

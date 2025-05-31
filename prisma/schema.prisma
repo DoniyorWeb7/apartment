@@ -18,6 +18,30 @@ model User {
   role            Role     @default(USER)
 
   apartment Apartment[]
+  saleApart SaleApartment[]
+
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+model SaleApartment {
+  id           Int      @id @default(autoincrement())
+  status       String
+  images       Json
+  coverImage   String?
+  availability DateTime
+  price        Int
+  district     String
+  adress       String
+  room         Int
+  floor        Int
+  floorBuild   Int
+  square       Int
+  variant      String
+  description  String
+  owner        String
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int
 
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt

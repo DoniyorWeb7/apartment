@@ -1,9 +1,9 @@
-import { Apartment } from '@prisma/client';
+import { SaleApartment } from '@prisma/client';
 import { axiosInstance } from './instance';
 
-export const apartUpdata = async (
+export const saleApartUpdata = async (
   apartId: number,
-  data: Partial<Apartment> & { images?: File[]; cover?: File | null },
+  data: Partial<SaleApartment> & { images?: File[]; cover?: File | null },
 ) => {
   const formData = new FormData();
 
@@ -32,7 +32,7 @@ export const apartUpdata = async (
     });
   }
 
-  const response = await axiosInstance.put(`apartments/${apartId}`, formData, {
+  const response = await axiosInstance.put(`saleApart/${apartId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

@@ -34,8 +34,8 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Apartment, User } from '@prisma/client';
 import { Api } from '@/services/api-client';
-import { TableButton } from './table-button';
 import { RowWithDialog } from './row-with-dialog';
+import { SaleTableButton } from './table-button-sale-aprt';
 
 export type Payment = {
   id: string;
@@ -62,7 +62,7 @@ export interface CustomColumnMeta {
   options?: { label: string; value: string }[];
 }
 
-export function ApartTable() {
+export function SaleApartTable() {
   const [apart, setApart] = React.useState<ApartmentWithUser[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -156,50 +156,50 @@ export function ApartTable() {
         return rowDate.includes(value);
       },
     },
-    {
-      accessorKey: 'price',
-      meta: {
-        filterVariant: 'range', // Новый тип фильтра
-        min: 0, // Минимальная цена
-        max: 10000, // Максимальная цена (установите актуальное значение)
-      },
-      header: 'Цена',
-      cell: ({ row }) => {
-        const price = parseFloat(row.getValue('price'));
-        const formatted = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-        }).format(price);
-        return <div className="text-font-medium">{formatted}</div>;
-      },
-      filterFn: (row, id, value) => {
-        const rowValue = parseFloat(row.getValue(id));
-        // value теперь должен быть объектом { min, max }
-        if (!value) return true;
-        if (value.min !== undefined && rowValue < value.min) return false;
-        if (value.max !== undefined && rowValue > value.max) return false;
-        return true;
-      },
-    },
     // {
     //   accessorKey: 'price',
-    //   meta: { filterVariant: 'number' },
+    //   meta: {
+    //     filterVariant: 'range', // Новый тип фильтра
+    //     min: 0, // Минимальная цена
+    //     max: 10000, // Максимальная цена (установите актуальное значение)
+    //   },
     //   header: 'Цена',
     //   cell: ({ row }) => {
     //     const price = parseFloat(row.getValue('price'));
-
     //     const formatted = new Intl.NumberFormat('en-US', {
     //       style: 'currency',
     //       currency: 'USD',
     //     }).format(price);
-
     //     return <div className="text-font-medium">{formatted}</div>;
     //   },
     //   filterFn: (row, id, value) => {
-    //     const rowValue = row.getValue(id);
-    //     return String(rowValue).includes(String(value)); // Приводим к строке
+    //     const rowValue = parseFloat(row.getValue(id));
+    //     // value теперь должен быть объектом { min, max }
+    //     if (!value) return true;
+    //     if (value.min !== undefined && rowValue < value.min) return false;
+    //     if (value.max !== undefined && rowValue > value.max) return false;
+    //     return true;
     //   },
     // },
+    {
+      accessorKey: 'price',
+      meta: { filterVariant: 'number' },
+      header: 'Цена',
+      cell: ({ row }) => {
+        const price = parseFloat(row.getValue('price'));
+
+        const formatted = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(price);
+
+        return <div className="text-font-medium">{formatted}</div>;
+      },
+      filterFn: (row, id, value) => {
+        const rowValue = row.getValue(id);
+        return String(rowValue).includes(String(value)); // Приводим к строке
+      },
+    },
     {
       accessorKey: 'district',
       meta: {
@@ -271,14 +271,14 @@ export function ApartTable() {
       enableHiding: false,
       cell: ({ row }) => {
         const apart = row.original;
-        return <TableButton apart={apart} apartId={apart.id} />;
+        return <SaleTableButton apart={apart} apartId={apart.id} />;
       },
     },
   ];
   React.useEffect(() => {
     async function fetchApart() {
       try {
-        const aparts = await Api.apartments.getAll();
+        const aparts = await Api.saleApart.getAll();
         setApart(aparts);
       } catch (error) {
         console.error(error);
@@ -390,120 +390,7 @@ export function ApartTable() {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                // <Dialog key={row.id} open={dialogOpen} onOpenChange={setDialogOpen}>
-                //   <DialogTrigger asChild>
-                //     <TableRow
-                //       onClick={() => {
-                //         setSelectedApartment(row.original);
-                //         setDialogOpen(true);
-                //       }}
-                //       className="cursor-pointer"
-                //       data-state={row.getIsSelected() && 'selected'}>
-                //       {row.getVisibleCells().map((cell) => (
-                //         <TableCell key={cell.id}>
-                //           {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                //         </TableCell>
-                //       ))}
-                //     </TableRow>
-                //   </DialogTrigger>
-                //   <DialogContent className="sm:max-w-[425px]">
-                //     <DialogHeader>
-                //       {selectedApartment && (
-                //         <div className="space-y-2 overflow-auto h-[600px]">
-                //           <div className="flex flex-wrap">
-                //             {/* {(selectedApartment.images as string[])?.map((image, index) => (
-                //               <Image
-                //                 width={300}
-                //                 height={200}
-                //                 className="rounded-md object-cover"
-                //                 key={index}
-                //                 src={image}
-                //                 alt={`Apartment image ${index + 1}`}
-                //               />
-                //             ))} */}
-                //             <PreviewGallery images={selectedApartment.images as string[]} />
-                //           </div>
-                //           <p>
-                //             ID: <strong> {selectedApartment.id}</strong>
-                //           </p>
-                //           <p>
-                //             Сотрудник:
-                //             <strong> {selectedApartment.userId}</strong>
-                //           </p>
-                //           <hr />
-                //           <p className="mb-1">
-                //             <strong>Расположения:</strong>
-                //           </p>
-                //           <p>
-                //             Район: <strong> {selectedApartment.district}</strong>
-                //           </p>
-                //           <p>
-                //             Адрес: <strong> {selectedApartment.adress}</strong>
-                //           </p>
-                //           <hr />
-                //           <strong>Информации о квартиры:</strong>
-                //           <p>
-                //             Комнат: <strong> {selectedApartment.room}</strong>
-                //           </p>
-                //           <p>
-                //             Этаж: <strong> {selectedApartment.floor}</strong>
-                //           </p>
-                //           <p>
-                //             Этажнось:
-                //             <strong> {selectedApartment.floorBuild}</strong>
-                //           </p>
-                //           <p>
-                //             Площадь: <strong> {selectedApartment.square}</strong>
-                //           </p>
-                //           <hr />
-                //           <strong>Способ оплаты:</strong>
-                //           <p>
-                //             Предоплата:
-                //             <strong> {selectedApartment.variant === '1' ? 'Да' : 'Нет'}</strong>
-                //           </p>
-                //           <p>
-                //             Депозит:
-                //             <strong> {selectedApartment.variant === '2' ? 'Да' : 'Нет'}</strong>
-                //           </p>
-                //           <p>
-                //             Цена: <strong> ${selectedApartment.price}</strong>
-                //           </p>
-                //           <hr />
-                //           <p>
-                //             Доступно с:
-                //             <strong>
-                //               {'' + new Date(selectedApartment.availability).toLocaleDateString()}
-                //             </strong>
-                //           </p>
-                //           <p>
-                //             Дата обновления:
-                //             <strong>
-                //               {'' + new Date(selectedApartment.updateAt).toLocaleDateString()}
-                //             </strong>
-                //           </p>
-                //           <p>
-                //             Дата создания:
-                //             <strong>
-                //               {'' + new Date(selectedApartment.createAt).toLocaleDateString()}
-                //             </strong>
-                //           </p>
-                //           <hr />
-                //           <p>
-                //             Описание:
-                //             <strong>{selectedApartment.description}</strong>
-                //           </p>
-                //         </div>
-                //       )}
-                //     </DialogHeader>
-
-                //     <DialogFooter>
-                //       <Button type="submit">Save changes</Button>
-                //     </DialogFooter>
-                //   </DialogContent>
-                // </Dialog>
-                <RowWithDialog key={row.id} row={row} />
-              ))
+              table.getRowModel().rows.map((row) => <RowWithDialog key={row.id} row={row} />)
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">

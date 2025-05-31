@@ -3,37 +3,37 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { Trash } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { ApartDelete } from '@/services/apart-delete';
 import toast from 'react-hot-toast';
-import { apartUpdata } from '@/services/apart-update';
 import { Apartment } from '@prisma/client';
 import { ApartEditDialog } from './apart-edit-dialog';
 import { SendTelegramBtn } from './send-telegram-btn';
+import { saleApartUpdata } from '@/services/sale-apart-update';
+import { saleApartDelete } from '@/services/sale-apart-delete';
 interface Props {
   className?: string;
   apartId: number;
   apart: Apartment;
 }
 
-export const TableButton: React.FC<Props> = ({ apartId, apart }) => {
+export const SaleTableButton: React.FC<Props> = ({ apartId, apart }) => {
   const { data: session } = useSession();
   const handleUpdate = async (
     data: Partial<Apartment> & {
-      images?: File[]; // Измените JsonValue на File[]
-      cover?: File | null; // Измените coverImage на cover и тип на File | null
+      images?: File[];
+      cover?: File | null;
     },
   ) => {
     try {
-      await apartUpdata(apart.id, data);
-      toast.success('Пользователь изменен');
+      await saleApartUpdata(apart.id, data);
+      toast.success('Данные квартиры обновлены');
     } catch (error) {
-      toast.error('Ошибка при изменения пользователя');
-      console.error('Ошибка при обновлении пользователя:', error);
+      toast.error('Ошибка при обновлении данных');
+      console.error('Ошибка:', error);
     }
   };
   const handleDelete = async (apartId: number) => {
     try {
-      await ApartDelete(apartId);
+      await saleApartDelete(apartId);
       toast.success('Пользователь Удален');
     } catch (error) {
       toast.error('Ошибка при удаление пользователя');

@@ -7,7 +7,12 @@ import { Button } from '../ui/button';
 import { EditApartmentForm } from './edit-apart-form';
 interface UserEditDialogProps {
   apart: Apartment;
-  onUpdate: (data: Partial<Apartment>) => Promise<void>;
+  onUpdate: (
+    data: Partial<Apartment> & {
+      images?: File[];
+      cover?: File | null;
+    },
+  ) => Promise<void>;
 }
 
 export const ApartEditDialog = ({ apart, onUpdate }: UserEditDialogProps) => {
@@ -27,7 +32,7 @@ export const ApartEditDialog = ({ apart, onUpdate }: UserEditDialogProps) => {
           <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent onClick={(e) => e.stopPropagation()}>
+      <DialogContent className="h-[600px] overflow-auto" onClick={(e) => e.stopPropagation()}>
         <EditApartmentForm
           apartment={apart}
           onSubmit={async (data) => {
