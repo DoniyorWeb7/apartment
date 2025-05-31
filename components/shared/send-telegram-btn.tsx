@@ -23,7 +23,8 @@ export const SendTelegramBtn: React.FC<Props> = ({ className, apartment }) => {
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState<boolean | null>(null);
 
-  const handleClick = async () => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     try {
       setLoading(true);
       setSuccess(null);

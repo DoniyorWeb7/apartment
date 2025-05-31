@@ -58,6 +58,7 @@ export const TableButton: React.FC<Props> = ({ apartId, apart }) => {
       {(session?.user?.role === 'ADMIN' || session?.user?.id === apart.userId.toString()) && (
         <>
           <SendTelegramBtn
+            
             apartment={{
               id: apart.id,
               price: apart.price,
