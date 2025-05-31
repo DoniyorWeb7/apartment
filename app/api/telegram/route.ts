@@ -11,7 +11,10 @@ function escapeMarkdown(text: string) {
 export async function POST(req: Request) {
   try {
     if (!TELEGRAM_BOT_TOKEN || !CHAT_ID) {
-      throw new Error('Telegram credentials not configured');
+      return NextResponse.json(
+        { success: false, error: 'Telegram credentials not configured' },
+        { status: 500 },
+      );
     }
 
     const body = await req.json();

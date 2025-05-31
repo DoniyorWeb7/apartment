@@ -28,7 +28,6 @@ export const SendTelegramBtn: React.FC<Props> = ({ className, apartment }) => {
       setLoading(true);
       setSuccess(null);
 
-      // Преобразуем images в массив строк, если это необходимо
       const imagesArray = Array.isArray(apartment.images)
         ? apartment.images
         : typeof apartment.images === 'string'
