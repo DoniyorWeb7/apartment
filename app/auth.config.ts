@@ -65,18 +65,7 @@ export const authConfig: NextAuthOptions = {
       return session;
     },
   },
-  cookies: {
-    sessionToken: {
-      name: '__Secure-next-auth.session-token',
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        // secure ставим в false, т.к. у тебя http, не https
-        secure: false,
-      },
-    },
-  },
+  
   pages: {
     signIn: '/login',
   },
