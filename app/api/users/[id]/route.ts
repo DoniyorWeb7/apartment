@@ -29,13 +29,6 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Некорректный ID' }, { status: 400 });
     }
 
-    // // const relatedCount = await prisma.owner.count({ where: { userId } });
-    // if (relatedCount > 0) {
-    //   return NextResponse.json(
-    //     { error: 'Невозможно удалить пользователя: есть связанные записи.' },
-    //     { status: 400 },
-    //   );
-    // }
 
     await prisma.user.delete({ where: { id: userId } });
 

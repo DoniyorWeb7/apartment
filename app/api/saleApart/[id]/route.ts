@@ -1,6 +1,7 @@
+import { s3 } from '@/lib/s3Client';
 import { prisma } from '@/prisma/prisma-client';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { Prisma } from '@prisma/client';
-import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -77,34 +78,53 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const coverImage = formData.get('cover') as File | null;
     const images = formData.getAll('images') as File[];
 
+    const uploadToS3 = async (file: File) => {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const key = `sale-apartments/${Date.now()}-${file.name}`;
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET!,
+        Key: key,
+        Body: buffer,
+        ContentType: file.type,
+        ACL: 'public-read',
+      });
+
+      await s3.send(command);
+      return `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${key}`;
+    };
+
     const updateData: Prisma.ApartmentUpdateInput = { ...textData };
 
     // Загрузка обложки
-    if (coverImage instanceof File && coverImage.size > 0) {
-      try {
-        const blob = await put(`apartments/cover-${Date.now()}`, coverImage, {
-          access: 'public',
-        });
-        updateData.coverImage = blob.url;
-      } catch (error) {
-        console.error('Ошибка загрузки обложки:', error);
-        // Можно добавить обработку ошибки (например, toast.notify)
-      }
-    } else if (coverImage === null) {
-      // Если передано явное null - очищаем обложку
-      updateData.coverImage = null;
+    const imageUploadPromises = images.map(async (file) => {
+      const url = await uploadToS3(file);
+      return {
+        url,
+        isCover: coverImage ? file.name === coverImage.name : false,
+      };
+    });
+
+    const uploadedImages = await Promise.all(imageUploadPromises);
+    // Обложка
+    const hasCover = uploadedImages.some((img) => img.isCover);
+    if (!hasCover && coverImage) {
+      const coverUrl = await uploadToS3(coverImage);
+      uploadedImages.push({
+        url: coverUrl,
+        isCover: true,
+      });
     }
 
-    // Загрузка дополнительных изображений
-    if (images?.length > 0 && images[0].size > 0) {
-      const imageUrls = await Promise.all(
-        images.map((file, index) =>
-          put(`saleApartments/${apartId}/image-${Date.now()}-${index}`, file, {
-            access: 'public',
-          }),
-        ),
-      );
-      updateData.images = imageUrls.map((blob) => blob.url);
+    if (uploadedImages.length > 0) {
+      updateData.images = uploadedImages.map((img) => img.url);
+      updateData.coverImage =
+        uploadedImages.find((img) => img.isCover)?.url || uploadedImages[0]?.url;
+    }
+
+    // Если cover явное null — очистить
+    if (coverImage === null) {
+      updateData.coverImage = null;
     }
 
     // Обновление данных в базе

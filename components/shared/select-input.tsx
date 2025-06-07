@@ -31,6 +31,7 @@ interface Props {
 }
 
 export const SelectInput: React.FC<Props> = ({
+  className,
   nameLabel,
   title,
   valueInput = '',
@@ -42,10 +43,10 @@ export const SelectInput: React.FC<Props> = ({
   const selectedLabel = options.find((f) => f.value === valueInput)?.label;
 
   return (
-    <div>
+    <div className={className}>
       <Popover open={open} onOpenChange={setOpen}>
         <div className="mb-3">
-          <p className="mb-1">{title}</p>
+          <p className={cn('mb-1')}>{title}</p>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -57,7 +58,7 @@ export const SelectInput: React.FC<Props> = ({
             </Button>
           </PopoverTrigger>
         </div>
-        <PopoverContent className="w-full p-0 pointer-events-auto">
+        <PopoverContent className="w-full p-0 pointer-events-auto ">
           <Command>
             <CommandInput placeholder="Search framework..." className="h-9" />
             <CommandList>

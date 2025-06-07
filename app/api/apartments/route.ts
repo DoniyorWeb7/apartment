@@ -1,13 +1,16 @@
 import { authConfig } from '@/app/auth.config';
 import { prisma } from '@/prisma/prisma-client';
-import { put } from '@vercel/blob';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
-
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { s3 } from '@/lib/s3Client';
 export async function GET() {
   const apartment = await prisma.apartment.findMany({
     include: {
       user: true,
+    },
+    orderBy: {
+      id: 'desc',
     },
   });
   return NextResponse.json(apartment);
@@ -42,12 +45,34 @@ export async function POST(req: Request) {
 
     const coverFile = formData.get('cover') as File | null;
 
-    const imageUploadPromises = imagesFiles.map(async (file) => {
-      const blob = await put(`apartments/${Date.now()}-${file.name}`, file, {
-        access: 'public',
+    const uploadToS3 = async (file: File) => {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const key = `apartments/${Date.now()}-${file.name}`;
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET!,
+        Key: key,
+        Body: buffer,
+        ContentType: file.type,
+        ACL: 'public-read',
       });
+
+      await s3.send(command);
+      return `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${key}`;
+    };
+
+    const imageUploadPromises = imagesFiles.map(async (file) => {
+      // const blob = await put(`apartments/${Date.now()}-${file.name}`, file, {
+      //   access: 'public',
+      // });
+      // return {
+      //   url: blob.url,
+      //   isCover: coverFile ? file.name === coverFile.name : false,
+      // };
+
+      const url = await uploadToS3(file);
       return {
-        url: blob.url,
+        url,
         isCover: coverFile ? file.name === coverFile.name : false,
       };
     });
@@ -57,12 +82,18 @@ export async function POST(req: Request) {
     // Проверяем наличие обложки
     const hasCover = images.some((img) => img.isCover);
     if (!hasCover && coverFile) {
-      // Если обложка не найдена, но была выбрана
-      const coverBlob = await put(`apartments/${Date.now()}-${coverFile.name}`, coverFile, {
-        access: 'public',
-      });
+      // // Если обложка не найдена, но была выбрана
+      // const coverBlob = await put(`apartments/${Date.now()}-${coverFile.name}`, coverFile, {
+      //   access: 'public',
+      // });
+      // images.push({
+      //   url: coverBlob.url,
+      //   isCover: true,
+      // });
+
+      const url = await uploadToS3(coverFile);
       images.push({
-        url: coverBlob.url,
+        url,
         isCover: true,
       });
     }

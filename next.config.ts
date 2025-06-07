@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*.public.blob.vercel-storage.com',
+        hostname: 's3.twcstorage.ru',
+        pathname: '**',
       },
       // Добавьте другие домены при необходимости
     ],

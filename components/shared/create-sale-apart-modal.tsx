@@ -17,7 +17,7 @@ import { Textarea } from '../ui/textarea';
 import { ImageUploadInput } from './image-upload-input';
 import { DateInput } from './date-input';
 import { FormInputBlock } from './form-input-block';
-import { User } from '@prisma/client';
+import { Owner, User } from '@prisma/client';
 import { Api } from '@/services/api-client';
 import toast from 'react-hot-toast';
 import { SaleApartCreate } from '@/services/sale-apart';
@@ -46,6 +46,7 @@ export const SaleCreateApartModal: React.FC<Props> = ({}) => {
   const [cover, setCover] = React.useState<File | null>(null);
   const [date, setDate] = React.useState<Date>();
   const [username, setUsername] = React.useState<User[]>([]);
+  const [owner, setOwner] = React.useState<Owner[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const fetchUsers = async () => {
     try {
@@ -57,8 +58,19 @@ export const SaleCreateApartModal: React.FC<Props> = ({}) => {
     }
   };
 
+  const fetchOwner = async () => {
+    try {
+      const owners = await Api.owners.getAll();
+      setOwner(owners);
+    } catch (error) {
+      console.error(error);
+    } finally {
+    }
+  };
+
   React.useEffect(() => {
     fetchUsers();
+    fetchOwner();
   }, []);
 
   const {
@@ -145,6 +157,11 @@ export const SaleCreateApartModal: React.FC<Props> = ({}) => {
     value: user.username,
   }));
 
+  const ownerTypeOptions = owner.map((owner) => ({
+    label: `${owner.fullName}  ${owner.phone}`,
+    value: owner.phone,
+  }));
+
   const variantOptions = [
     { label: 'Предоплата', value: '1' },
     { label: 'Депозит', value: '2' },
@@ -185,6 +202,22 @@ export const SaleCreateApartModal: React.FC<Props> = ({}) => {
                 />
               )}
             />
+
+            <Controller
+              name="owner"
+              control={control}
+              rules={{ required: 'Выберите владельца' }}
+              render={({ field }) => (
+                <SelectInput
+                  title="Владелец"
+                  nameLabel="Выберите владельца"
+                  valueInput={field.value}
+                  onChange={field.onChange}
+                  error={errors.owner?.message}
+                  options={ownerTypeOptions}
+                />
+              )}
+            />
             {/* <Controller
               name="owner"
               control={control}
@@ -216,7 +249,7 @@ export const SaleCreateApartModal: React.FC<Props> = ({}) => {
                 />
               )}
             />
-            <FormInputBlock
+            {/* <FormInputBlock
               {...register('owner', {
                 required: 'Поле объязательно',
                 minLength: { value: 5, message: 'Минимум 5 символов' },
@@ -226,7 +259,7 @@ export const SaleCreateApartModal: React.FC<Props> = ({}) => {
               type="text"
               placeholder="Владелец"
               error={errors.owner?.message}
-            />
+            /> */}
             <FormInputBlock
               {...register('adress', {
                 required: 'Поле объязательно',

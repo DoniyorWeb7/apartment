@@ -1,7 +1,7 @@
 export enum ApiRoutes {
   APARTMENTS = '/apartments',
   SALE_APART = '/saleApart',
-  OWNERS = '/owners',
+  OWNERS = '/owner',
   USERS = '/users',
 }
 

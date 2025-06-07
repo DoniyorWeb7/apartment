@@ -19,9 +19,23 @@ model User {
 
   apartment Apartment[]
   saleApart SaleApartment[]
+  owners Owner[]
 
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
+}
+
+model Owner {
+  id Int @id @default(autoincrement())
+
+  fullName String
+  phone    String @unique
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+
+  createAt DateTime @default(now())
+  updataAt DateTime @updatedAt
 }
 
 model SaleApartment {

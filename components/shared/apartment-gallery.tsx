@@ -30,8 +30,8 @@ export const PreviewGallery = ({ images }: Props) => {
             key={index}
             src={img}
             alt={`Apartment image ${index + 1}`}
-            width={300}
-            height={200}
+            width={120}
+            height={80}
             className="rounded-md object-cover cursor-pointer"
             onClick={() => handleClick(index)}
           />

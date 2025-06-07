@@ -18,7 +18,7 @@ import { ImageUploadInput } from './image-upload-input';
 import { DateInput } from './date-input';
 import { FormInputBlock } from './form-input-block';
 import { ApartCreate } from '@/services/apartments';
-import { User } from '@prisma/client';
+import { Owner, User } from '@prisma/client';
 import { Api } from '@/services/api-client';
 import toast from 'react-hot-toast';
 
@@ -46,6 +46,7 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
   const [cover, setCover] = React.useState<File | null>(null);
   const [date, setDate] = React.useState<Date>();
   const [username, setUsername] = React.useState<User[]>([]);
+  const [owner, setOwner] = React.useState<Owner[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const fetchUsers = async () => {
     try {
@@ -57,8 +58,19 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
     }
   };
 
+  const fetchOwners = async () => {
+    try {
+      const owner = await Api.owners.getAll();
+      setOwner(owner);
+    } catch (error) {
+      console.error(error);
+    } finally {
+    }
+  };
+
   React.useEffect(() => {
     fetchUsers();
+    fetchOwners();
   }, []);
 
   const {
@@ -87,7 +99,6 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
   const onSubmit: SubmitHandler<MyForm> = async (data) => {
     const formData = new FormData();
 
-    // Добавляем текстовые данные
     formData.append('status', data.status || 'Активна');
     formData.append('availability', date ? date.toISOString() : new Date().toISOString());
     formData.append('price', String(data.price ?? 0));
@@ -145,6 +156,11 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
     value: user.username,
   }));
 
+  const ownerTypeOptions = owner.map((owner) => ({
+    label: `${owner.fullName}  ${owner.phone}`,
+    value: owner.phone,
+  }));
+
   const variantOptions = [
     { label: 'Предоплата', value: '1' },
     { label: 'Депозит', value: '2' },
@@ -185,21 +201,22 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
                 />
               )}
             />
-            {/* <Controller
+
+            <Controller
               name="owner"
               control={control}
-              rules={{ required: 'Выберите владельца ' }}
+              rules={{ required: 'Выберите владельца пользователя' }}
               render={({ field }) => (
                 <SelectInput
-                  title="Владелец"
-                  nameLabel="Выберите владельца"
+                  title="Пользователь как владелец"
+                  nameLabel="Выберите владельца пользователя"
                   valueInput={field.value}
                   onChange={field.onChange}
                   error={errors.owner?.message}
                   options={ownerTypeOptions}
                 />
               )}
-            /> */}
+            />
 
             <Controller
               name="district"
@@ -216,7 +233,7 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
                 />
               )}
             />
-            <FormInputBlock
+            {/* <FormInputBlock
               {...register('owner', {
                 required: 'Поле объязательно',
                 minLength: { value: 5, message: 'Минимум 5 символов' },
@@ -226,7 +243,7 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
               type="text"
               placeholder="Владелец"
               error={errors.owner?.message}
-            />
+            /> */}
             <FormInputBlock
               {...register('adress', {
                 required: 'Поле объязательно',
