@@ -71,14 +71,14 @@ export const RowWithDialog = ({ row }: { row: Row<ApartmentWithUser> }) => {
             </p>
             <hr />
             <strong>Способ оплаты:</strong>
-            <p>
+            {/* <p>
               Предоплата:
               <strong> {row.original.variant === '1' ? 'Да' : 'Нет'}</strong>
-            </p>
-            <p>
+            </p> */}
+            {/* <p>
               Депозит:
               <strong> {row.original.variant === '2' ? 'Да' : 'Нет'}</strong>
-            </p>
+            </p> */}
             <p>
               Цена: <strong> ${row.original.price}</strong>
             </p>

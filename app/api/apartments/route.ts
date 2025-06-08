@@ -62,14 +62,6 @@ export async function POST(req: Request) {
     };
 
     const imageUploadPromises = imagesFiles.map(async (file) => {
-      // const blob = await put(`apartments/${Date.now()}-${file.name}`, file, {
-      //   access: 'public',
-      // });
-      // return {
-      //   url: blob.url,
-      //   isCover: coverFile ? file.name === coverFile.name : false,
-      // };
-
       const url = await uploadToS3(file);
       return {
         url,
@@ -82,15 +74,6 @@ export async function POST(req: Request) {
     // Проверяем наличие обложки
     const hasCover = images.some((img) => img.isCover);
     if (!hasCover && coverFile) {
-      // // Если обложка не найдена, но была выбрана
-      // const coverBlob = await put(`apartments/${Date.now()}-${coverFile.name}`, coverFile, {
-      //   access: 'public',
-      // });
-      // images.push({
-      //   url: coverBlob.url,
-      //   isCover: true,
-      // });
-
       const url = await uploadToS3(coverFile);
       images.push({
         url,

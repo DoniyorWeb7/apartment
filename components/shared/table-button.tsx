@@ -13,9 +13,10 @@ interface Props {
   className?: string;
   apartId: number;
   apart: Apartment;
+  onEditedApart: () => void;
 }
 
-export const TableButton: React.FC<Props> = ({ apartId, apart }) => {
+export const TableButton: React.FC<Props> = ({ apartId, apart, onEditedApart }) => {
   const { data: session } = useSession();
   const handleUpdate = async (
     data: Partial<Apartment> & {
@@ -26,6 +27,7 @@ export const TableButton: React.FC<Props> = ({ apartId, apart }) => {
     try {
       await apartUpdata(apart.id, data);
       toast.success('Пользователь изменен');
+      onEditedApart();
     } catch (error) {
       toast.error('Ошибка при изменения пользователя');
       console.error('Ошибка при обновлении пользователя:', error);

@@ -1,10 +1,8 @@
 import { prisma } from '@/prisma/prisma-client';
-// import { NextAuthConfig } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { NextAuthOptions, Session, SessionStrategy } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
-// import { User } from '@prisma/client';
 const JWT_SECRET = process.env.NEXTAUTH_SECRET;
 console.log(JWT_SECRET);
 

@@ -1,6 +1,14 @@
-/* eslint-disable @next/next/no-img-element */
 import React from 'react';
-
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableImageCard } from './SortableImageCard';
 interface Props {
   onSubmit: (images: File[], cover: File | null) => void;
 }
@@ -8,6 +16,7 @@ interface Props {
 export const ImageUploadInput: React.FC<Props> = ({ onSubmit }) => {
   const [images, setImages] = React.useState<File[]>([]);
   const [cover, setCover] = React.useState<File | null>(null);
+  const sensors = useSensors(useSensor(PointerSensor));
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -17,9 +26,29 @@ export const ImageUploadInput: React.FC<Props> = ({ onSubmit }) => {
     }
   };
 
+  const handleDeleteImage = (imageToDelete: File) => {
+    const updatedImages = images.filter((img) => img.name !== imageToDelete.name);
+    const newCover = cover?.name === imageToDelete.name ? null : cover;
+    setImages(updatedImages);
+    setCover(newCover);
+    onSubmit(updatedImages, newCover);
+  };
+
   const handleCoverSelect = (image: File) => {
     setCover(image);
     onSubmit(images, image);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    if (active.id !== over.id) {
+      const oldIndex = images.findIndex((img) => img.name === active.id);
+      const newIndex = images.findIndex((img) => img.name === over.id);
+      const newImages = arrayMove(images, oldIndex, newIndex);
+      setImages(newImages);
+      onSubmit(newImages, cover);
+    }
   };
 
   return (
@@ -43,37 +72,26 @@ export const ImageUploadInput: React.FC<Props> = ({ onSubmit }) => {
       {images.length > 0 && (
         <div>
           <p className="mb-2 font-medium">Выберите обложку:</p>
-          <div className="grid grid-cols-3 gap-3">
-            {images.map((image, index) => (
-              <div key={index} className="relative group">
-                {/* <Image
-                  src={URL.createObjectURL(image)}
-                  alt={`Preview ${index}`}
-                  fill
-                  className={`w-full h-32 object-cover rounded-lg border-2 
-                    ${cover?.name === image.name ? 'border-blue-500' : 'border-transparent'}`}
-                /> */}
-
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt={`Preview ${index}`}
-                  className={`w-full h-32 object-cover rounded-lg border-2 
-                  ${cover?.name === image.name ? 'border-blue-500' : 'border-transparent'}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleCoverSelect(image)}
-                  className={`absolute bottom-2 right-2 px-2 py-1 text-xs rounded
-                    ${
-                      cover?.name === image.name
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white text-gray-800 border border-gray-300'
-                    }`}>
-                  {cover?.name === image.name ? 'Обложка' : 'Выбрать'}
-                </button>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}>
+            <SortableContext
+              items={images.map((img) => img.name)}
+              strategy={verticalListSortingStrategy}>
+              <div className="grid grid-cols-3 gap-3">
+                {images.map((image) => (
+                  <SortableImageCard
+                    key={image.name}
+                    image={image}
+                    isCover={cover?.name === image.name}
+                    onSelect={() => handleCoverSelect(image)}
+                    onDelete={() => handleDeleteImage(image)}
+                  />
+                ))}
               </div>
-            ))}
-          </div>
+            </SortableContext>
+          </DndContext>
         </div>
       )}
     </div>

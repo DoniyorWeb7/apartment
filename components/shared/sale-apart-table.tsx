@@ -32,10 +32,11 @@ import {
 } from '@/components/ui/table';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { Apartment, User } from '@prisma/client';
+import { Apartment, Owner, User } from '@prisma/client';
 import { Api } from '@/services/api-client';
 import { RowWithDialog } from './row-with-dialog';
 import { SaleTableButton } from './table-button-sale-aprt';
+import { SelectInput } from './select-input';
 
 export type Payment = {
   id: string;
@@ -69,6 +70,8 @@ export function SaleApartTable() {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [userOptions, setUserOptions] = React.useState<User[]>([]);
+  const [ownerOptions, setOwnerOptions] = React.useState<Owner[]>([]);
+
   const statusOptions = [
     { label: 'Занят', value: 'Занят' },
     { label: 'Свободен', value: 'Свободен' },
@@ -83,8 +86,19 @@ export function SaleApartTable() {
     }
   };
 
+  const fetchOwners = async () => {
+    try {
+      const owner = await Api.owners.getAll();
+      setOwnerOptions(owner);
+    } catch (error) {
+      console.error(error);
+    } finally {
+    }
+  };
+
   React.useEffect(() => {
     fetchUsers();
+    fetchOwners();
   }, []);
   const columns: ColumnDef<ApartmentWithUser>[] = [
     {
@@ -205,17 +219,18 @@ export function SaleApartTable() {
       meta: {
         filterVariant: 'select',
         options: [
-          { label: 'Алмазарский район', value: 'Алмазарский район' },
-          { label: 'Бектемирский район', value: 'Бектемирский район' },
-          { label: 'Мирабадский район', value: 'Мирабадский район' },
-          { label: 'Мирзо-Улугбекский район', value: 'Мирзо-Улугбекский район' },
-          { label: 'Сергелийский район', value: 'Сергелийский район' },
-          { label: 'Чиланзарский район', value: 'Чиланзарский район' },
-          { label: 'Шайхантаурский район', value: 'Шайхантаурский район' },
-          { label: 'Юнусабадский район', value: 'Юнусабадский район' },
-          { label: 'Яккасарайский район', Value: 'Яккасарайский район' },
-          { label: 'Яшнабадский район', value: 'Яшнабадский район' },
-          { label: 'Учтепинский район', value: 'Учтепинский район' },
+          { label: 'Все', value: '' },
+          { label: 'Алмазарский', value: 'Алмазарский' },
+          { label: 'Бектемирский ', value: 'Бектемирский' },
+          { label: 'Мирабадский', value: 'Мирабадский' },
+          { label: 'Мирзо-Улугбекский', value: 'Мирзо-Улугбекский' },
+          { label: 'Сергелийский', value: 'Сергелийский' },
+          { label: 'Чиланзарский', value: 'Чиланзарский' },
+          { label: 'Шайхантаурский', value: 'Шайхантаурский' },
+          { label: 'Юнусабадский', value: 'Юнусабадский' },
+          { label: 'Яккасарайский', value: 'Яккасарайский' },
+          { label: 'Яшнабадский', value: 'Яшнабадский' },
+          { label: 'Учтепинский', value: 'Учтепинский' },
         ],
       },
       header: 'Район',
@@ -251,17 +266,29 @@ export function SaleApartTable() {
       accessorKey: 'user.username',
       meta: {
         filterVariant: 'select',
-        options: userOptions.map((user) => ({
-          label: user.username,
-          value: user.username,
-        })),
+        options: [
+          { label: 'Все', value: '' },
+          ...userOptions.map((user) => ({
+            label: user.username,
+            value: user.username,
+          })),
+        ],
       },
       header: 'Сотрудник',
       cell: ({ row }) => <div className="capitalize">{row.original.user?.username ?? '—'}</div>,
     },
     {
       accessorKey: 'owner',
-      meta: { filterVariant: 'text' },
+      meta: {
+        filterVariant: 'select',
+        options: [
+          { label: 'Все', value: '' },
+          ...ownerOptions.map((owner) => ({
+            label: `${owner.fullName}  ${owner.phone}`,
+            value: owner.phone,
+          })),
+        ],
+      },
       header: 'Владелец',
       cell: ({ row }) => <div className="capitalize">{row.getValue('owner')}</div>,
     },
@@ -359,17 +386,15 @@ export function SaleApartTable() {
                   <TableHead key={column.id}>
                     {column.getCanFilter() ? (
                       filterVariant === 'select' ? (
-                        <select
-                          className="h-8 w-full border rounded px-2"
-                          value={(column.getFilterValue() as string) ?? ''}
-                          onChange={(e) => column.setFilterValue(e.target.value)}>
-                          <option value="">Все</option>
-                          {options.map((opt) => (
-                            <option key={opt.label} value={opt.value}>
-                              {opt.label}
-                            </option>
-                          ))}
-                        </select>
+                        <SelectInput
+                          key={column.id}
+                          title=""
+                          className=" h-[32px]"
+                          nameLabel="Выберите"
+                          valueInput={(column.getFilterValue() as string) ?? ''}
+                          onChange={(value) => column.setFilterValue(value)}
+                          options={options}
+                        />
                       ) : imageInputHide === 'Изображения' ? null : (
                         <Input
                           placeholder={

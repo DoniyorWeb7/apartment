@@ -2,7 +2,7 @@ import { Apartment } from '@prisma/client';
 import { Pencil } from 'lucide-react';
 import React from 'react';
 
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
 import { EditApartmentForm } from './edit-apart-form';
 interface UserEditDialogProps {
@@ -33,6 +33,7 @@ export const ApartEditDialog = ({ apart, onUpdate }: UserEditDialogProps) => {
         </Button>
       </DialogTrigger>
       <DialogContent className="h-[600px] overflow-auto" onClick={(e) => e.stopPropagation()}>
+        <DialogTitle>Изменить квартиру</DialogTitle>
         <EditApartmentForm
           apartment={apart}
           onSubmit={async (data) => {

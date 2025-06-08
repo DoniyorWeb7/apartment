@@ -37,6 +37,7 @@ import { Api } from '@/services/api-client';
 import { TableButton } from './table-button';
 import { RowWithDialog } from './row-with-dialog';
 import { SelectInput } from './select-input';
+import { CreateApartModal } from './create-apart-modal';
 
 export type Payment = {
   id: string;
@@ -96,9 +97,19 @@ export function ApartTable() {
     }
   };
 
+  const fetchApart = async () => {
+    try {
+      const aparts = await Api.apartments.getAll();
+      setApart(aparts);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   React.useEffect(() => {
     fetchUsers();
     fetchOwners();
+    fetchApart();
   }, []);
   const columns: ColumnDef<ApartmentWithUser>[] = [
     {
@@ -170,67 +181,43 @@ export function ApartTable() {
         return rowDate.includes(value);
       },
     },
+
     {
       accessorKey: 'price',
-      meta: {
-        filterVariant: 'range', // Новый тип фильтра
-        min: 0, // Минимальная цена
-        max: 10000, // Максимальная цена (установите актуальное значение)
-      },
+      meta: { filterVariant: 'number' },
       header: 'Цена',
       cell: ({ row }) => {
         const price = parseFloat(row.getValue('price'));
+
         const formatted = new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency: 'USD',
         }).format(price);
+
         return <div className="text-font-medium">{formatted}</div>;
       },
       filterFn: (row, id, value) => {
-        const rowValue = parseFloat(row.getValue(id));
-        // value теперь должен быть объектом { min, max }
-        if (!value) return true;
-        if (value.min !== undefined && rowValue < value.min) return false;
-        if (value.max !== undefined && rowValue > value.max) return false;
-        return true;
+        const rowValue = row.getValue(id);
+        return String(rowValue).includes(String(value)); // Приводим к строке
       },
     },
-    // {
-    //   accessorKey: 'price',
-    //   meta: { filterVariant: 'number' },
-    //   header: 'Цена',
-    //   cell: ({ row }) => {
-    //     const price = parseFloat(row.getValue('price'));
-
-    //     const formatted = new Intl.NumberFormat('en-US', {
-    //       style: 'currency',
-    //       currency: 'USD',
-    //     }).format(price);
-
-    //     return <div className="text-font-medium">{formatted}</div>;
-    //   },
-    //   filterFn: (row, id, value) => {
-    //     const rowValue = row.getValue(id);
-    //     return String(rowValue).includes(String(value)); // Приводим к строке
-    //   },
-    // },
     {
       accessorKey: 'district',
       meta: {
         filterVariant: 'select',
         options: [
           { label: 'Все', value: '' },
-          { label: 'Алмазарский район', value: 'Алмазарский район' },
-          { label: 'Бектемирский район', value: 'Бектемирский район' },
-          { label: 'Мирабадский район', value: 'Мирабадский район' },
-          { label: 'Мирзо-Улугбекский район', value: 'Мирзо-Улугбекский район' },
-          { label: 'Сергелийский район', value: 'Сергелийский район' },
-          { label: 'Чиланзарский район', value: 'Чиланзарский район' },
-          { label: 'Шайхантаурский район', value: 'Шайхантаурский район' },
-          { label: 'Юнусабадский район', value: 'Юнусабадский район' },
-          { label: 'Яккасарайский район', value: 'Яккасарайский район' },
-          { label: 'Яшнабадский район', value: 'Яшнабадский район' },
-          { label: 'Учтепинский район', value: 'Учтепинский район' },
+          { label: 'Алмазарский', value: 'Алмазарский' },
+          { label: 'Бектемирский ', value: 'Бектемирский' },
+          { label: 'Мирабадский', value: 'Мирабадский' },
+          { label: 'Мирзо-Улугбекский', value: 'Мирзо-Улугбекский' },
+          { label: 'Сергелийский', value: 'Сергелийский' },
+          { label: 'Чиланзарский', value: 'Чиланзарский' },
+          { label: 'Шайхантаурский', value: 'Шайхантаурский' },
+          { label: 'Юнусабадский', value: 'Юнусабадский' },
+          { label: 'Яккасарайский', value: 'Яккасарайский' },
+          { label: 'Яшнабадский', value: 'Яшнабадский' },
+          { label: 'Учтепинский', value: 'Учтепинский' },
         ],
       },
       header: 'Район',
@@ -298,21 +285,11 @@ export function ApartTable() {
       enableHiding: false,
       cell: ({ row }) => {
         const apart = row.original;
-        return <TableButton apart={apart} apartId={apart.id} />;
+        return <TableButton onEditedApart={fetchApart} apart={apart} apartId={apart.id} />;
       },
     },
   ];
-  React.useEffect(() => {
-    async function fetchApart() {
-      try {
-        const aparts = await Api.apartments.getAll();
-        setApart(aparts);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchApart();
-  }, []);
+
   const table = useReactTable<Apartment>({
     data: apart,
     columns,
@@ -467,6 +444,7 @@ export function ApartTable() {
           {'>>'}
         </Button>
       </div>
+      <CreateApartModal onApartAdded={fetchApart} />
     </div>
   );
 }

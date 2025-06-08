@@ -30,7 +30,6 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
 
-  // Логирование для отладки (удалите в продакшене)
   console.log({
     pathname,
     isAuth,

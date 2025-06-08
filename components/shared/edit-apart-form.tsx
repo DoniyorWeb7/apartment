@@ -129,23 +129,23 @@ export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartme
       floor: apartment.floor,
       floorBuild: apartment.floorBuild,
       square: apartment.square,
-      variant: apartment.variant,
+      // variant: apartment.variant,
       description: apartment.description,
       owner: apartment.owner,
     },
   });
 
   const districtOptions = [
-    { label: 'Алмазарский район', value: 'Алмазарский район' },
-    { label: 'Бектемирский район', value: 'Бектемирский район' },
-    { label: 'Мирабадский район', value: 'Мирабадский район' },
-    { label: 'Мирзо-Улугбекский район', value: 'Мирзо-Улугбекский район' },
-    { label: 'Сергелийский район', value: 'Сергелийский район' },
-    { label: 'Чиланзарский район', value: 'Чиланзарский район' },
-    { label: 'Шайхантаурский район', value: 'Шайхантаурский район' },
-    { label: 'Юнусабадский район', value: 'Юнусабадский район' },
-    { label: 'Яшнабадский район', value: 'Яшнабадский район' },
-    { label: 'Учтепинский район', value: 'Учтепинский район' },
+    { label: 'Алмазарский', value: 'Алмазарский' },
+    { label: 'Бектемирский', value: 'Бектемирский' },
+    { label: 'Мирабадский', value: 'Мирабадский' },
+    { label: 'Мирзо-Улугбекский', value: 'Мирзо-Улугбекский' },
+    { label: 'Сергелийский', value: 'Сергелийский' },
+    { label: 'Чиланзарский', value: 'Чиланзарский' },
+    { label: 'Шайхантаурский', value: 'Шайхантаурский' },
+    { label: 'Юнусабадский', value: 'Юнусабадский' },
+    { label: 'Яшнабадский', value: 'Яшнабадский' },
+    { label: 'Учтепинский', value: 'Учтепинский' },
   ];
 
   const userOptions = users.map((user) => ({
@@ -153,10 +153,10 @@ export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartme
     value: user.username,
   }));
 
-  const variantOptions = [
-    { label: 'Предоплата', value: '1' },
-    { label: 'Депозит', value: '2' },
-  ];
+  // const variantOptions = [
+  //   { label: 'Предоплата', value: '1' },
+  //   { label: 'Депозит', value: '2' },
+  // ];
 
   const statusOptions = [
     { label: 'Занят', value: 'Занят' },
@@ -179,6 +179,7 @@ export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartme
             images,
             cover,
           };
+
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await onSubmit(transformed as any);
         } catch (error) {
@@ -305,7 +306,7 @@ export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartme
         error={errors.square?.message}
       />
 
-      <Controller
+      {/* <Controller
         name="variant"
         control={control}
         render={({ field }) => (
@@ -317,7 +318,7 @@ export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartme
             options={variantOptions}
           />
         )}
-      />
+      /> */}
 
       <div className="grid w-full gap-1.5">
         <label htmlFor="description">Описание</label>

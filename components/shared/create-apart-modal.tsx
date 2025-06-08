@@ -24,6 +24,7 @@ import toast from 'react-hot-toast';
 
 interface Props {
   className?: string;
+  onApartAdded: () => void;
 }
 
 export interface MyForm {
@@ -41,7 +42,8 @@ export interface MyForm {
   price?: number;
 }
 
-export const CreateApartModal: React.FC<Props> = ({}) => {
+export const CreateApartModal: React.FC<Props> = ({ onApartAdded }) => {
+  console.log(onApartAdded);
   const [images, setImages] = React.useState<File[]>([]);
   const [cover, setCover] = React.useState<File | null>(null);
   const [date, setDate] = React.useState<Date>();
@@ -89,7 +91,7 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
       floor: undefined,
       floorBuild: undefined,
       square: undefined,
-      variant: '',
+      variant: 'No',
       status: '',
       description: '',
       price: undefined,
@@ -125,6 +127,7 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
       setIsLoading(true);
       const res = await ApartCreate.create(formData);
       toast.success('Квартира успешно создана! ID: ' + res.data.id);
+      onApartAdded();
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
       toast.error('Ошибка при отправке данных');
@@ -139,16 +142,16 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
   };
 
   const districtOptions = [
-    { label: 'Алмазарский район', value: 'Алмазарский район' },
-    { label: 'Бектемирский район', value: 'Бектемирский район' },
-    { label: 'Мирабадский район', value: 'Мирабадский район' },
-    { label: 'Мирзо-Улугбекский район', value: 'Мирзо-Улугбекский район' },
-    { label: 'Сергелийский район', value: 'Сергелийский район' },
-    { label: 'Чиланзарский район', value: 'Чиланзарский район' },
-    { label: 'Шайхантаурский район', value: 'Шайхантаурский район' },
-    { label: 'Юнусабадский район', value: 'Юнусабадский район' },
-    { label: 'Яшнабадский район', value: 'Яшнабадский район' },
-    { label: 'Учтепинский район', value: 'Учтепинский район' },
+    { label: 'Алмазарский', value: 'Алмазарский' },
+    { label: 'Бектемирский', value: 'Бектемирский' },
+    { label: 'Мирабадский', value: 'Мирабадский' },
+    { label: 'Мирзо-Улугбекский', value: 'Мирзо-Улугбекский' },
+    { label: 'Сергелийский', value: 'Сергелийский' },
+    { label: 'Чиланзарский', value: 'Чиланзарский' },
+    { label: 'Шайхантаурский', value: 'Шайхантаурский' },
+    { label: 'Юнусабадский', value: 'Юнусабадский' },
+    { label: 'Яшнабадский', value: 'Яшнабадский' },
+    { label: 'Учтепинский', value: 'Учтепинский' },
   ];
 
   const userTypeOptions = username.map((user) => ({
@@ -161,10 +164,10 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
     value: owner.phone,
   }));
 
-  const variantOptions = [
-    { label: 'Предоплата', value: '1' },
-    { label: 'Депозит', value: '2' },
-  ];
+  // const variantOptions = [
+  //   { label: 'Предоплата', value: '1' },
+  //   { label: 'Депозит', value: '2' },
+  // ];
 
   const statusOptions = [
     { label: 'Занят', value: 'Занят' },
@@ -301,7 +304,7 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
             />
             <p className="text-[12px]">кв.м</p>
 
-            <div className="flex flex-col gap-3 mt-2 mb-3">
+            {/* <div className="flex flex-col gap-3 mt-2 mb-3">
               <Controller
                 name="variant"
                 control={control}
@@ -317,7 +320,7 @@ export const CreateApartModal: React.FC<Props> = ({}) => {
                   />
                 )}
               />
-            </div>
+            </div> */}
 
             <Controller
               name="status"
