@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Loader } from 'lucide-react';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('doniy');
-  const [password, setPassword] = useState('111111');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -57,9 +57,9 @@ export default function LoginPage() {
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Вход в систему</h1>
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="bg-card p-8 rounded shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-6 text-center text-primary">Вход в систему</h1>
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
@@ -67,7 +67,7 @@ export default function LoginPage() {
         )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Логин</label>
+            <label className="block text-sm font-medium text-primary mb-1">Логин</label>
             <input
               type="text"
               value={username}
@@ -77,7 +77,7 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
+            <label className="block text-sm font-medium text-primary mb-1">Пароль</label>
             <input
               type="password"
               value={password}
