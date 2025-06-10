@@ -10,6 +10,9 @@ export async function GET() {
     include: {
       user: true,
     },
+    orderBy: {
+      id: 'desc',
+    },
   });
   return NextResponse.json(apartment);
 }

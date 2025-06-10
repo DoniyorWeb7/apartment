@@ -5,9 +5,10 @@ import React, { useState } from 'react';
 interface DeleteButtonProps {
   userId: number;
   onDelete: (userId: number) => Promise<void>;
+  onResData: () => void;
 }
 
-export const DeleteButton = ({ userId, onDelete }: DeleteButtonProps) => {
+export const DeleteButton = ({ userId, onDelete, onResData }: DeleteButtonProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   console.log('Владелец', userId);
   const handleClick = async () => {
@@ -17,6 +18,7 @@ export const DeleteButton = ({ userId, onDelete }: DeleteButtonProps) => {
     setIsDeleting(true);
     try {
       await onDelete(userId);
+      onResData();
     } catch (err) {
       console.log(err);
       alert('Ошибка при удалении');

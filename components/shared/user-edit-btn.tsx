@@ -2,15 +2,16 @@ import { User } from '@prisma/client';
 import { Pencil } from 'lucide-react';
 import React from 'react';
 
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { EditUserForm } from './edit-user-form';
 import { Button } from '../ui/button';
 interface UserEditDialogProps {
   user: User;
   onUpdate: (data: Partial<User>) => Promise<void>;
+  onResUser: () => void;
 }
 
-export const UserEditDialog = ({ user, onUpdate }: UserEditDialogProps) => {
+export const UserEditDialog = ({ user, onUpdate, onResUser }: UserEditDialogProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -24,8 +25,10 @@ export const UserEditDialog = ({ user, onUpdate }: UserEditDialogProps) => {
         </Button>
       </DialogTrigger>
       <DialogContent>
+        <DialogTitle>Изменить пользователя</DialogTitle>
         <EditUserForm
           user={user}
+          onResUser={onResUser}
           onSubmit={async (data) => {
             await onUpdate(data);
             setIsOpen(false);

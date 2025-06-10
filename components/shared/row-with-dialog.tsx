@@ -42,7 +42,7 @@ export const RowWithDialog = ({ row }: { row: Row<ApartmentWithUser> }) => {
             </p>
             <p>
               Сотрудник:
-              <strong> {row.original.userId}</strong>
+              <strong> {row.original.user?.username}</strong>
             </p>
             <hr />
             <p className="mb-1">

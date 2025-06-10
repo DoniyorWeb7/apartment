@@ -37,6 +37,7 @@ import { Api } from '@/services/api-client';
 import { RowWithDialog } from './row-with-dialog';
 import { SaleTableButton } from './table-button-sale-aprt';
 import { SelectInput } from './select-input';
+import { SaleCreateApartModal } from './create-sale-apart-modal';
 
 export type Payment = {
   id: string;
@@ -95,6 +96,18 @@ export function SaleApartTable() {
     } finally {
     }
   };
+
+  const fetchApart = async () => {
+    try {
+      const aparts = await Api.saleApart.getAll();
+      setApart(aparts);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  React.useEffect(() => {
+    fetchApart();
+  }, []);
 
   React.useEffect(() => {
     fetchUsers();
@@ -298,21 +311,11 @@ export function SaleApartTable() {
       enableHiding: false,
       cell: ({ row }) => {
         const apart = row.original;
-        return <SaleTableButton apart={apart} apartId={apart.id} />;
+        return <SaleTableButton onResApart={fetchApart} apart={apart} apartId={apart.id} />;
       },
     },
   ];
-  React.useEffect(() => {
-    async function fetchApart() {
-      try {
-        const aparts = await Api.saleApart.getAll();
-        setApart(aparts);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchApart();
-  }, []);
+
   const table = useReactTable<Apartment>({
     data: apart,
     columns,
@@ -467,6 +470,7 @@ export function SaleApartTable() {
           {'>>'}
         </Button>
       </div>
+      <SaleCreateApartModal onAddedApart={fetchApart} />
     </div>
   );
 }

@@ -285,7 +285,7 @@ export function ApartTable() {
       enableHiding: false,
       cell: ({ row }) => {
         const apart = row.original;
-        return <TableButton onEditedApart={fetchApart} apart={apart} apartId={apart.id} />;
+        return <TableButton onResApart={fetchApart} apart={apart} apartId={apart.id} />;
       },
     },
   ];

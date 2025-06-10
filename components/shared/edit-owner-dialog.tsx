@@ -2,15 +2,16 @@ import { Owner } from '@prisma/client';
 import { Pencil } from 'lucide-react';
 import React from 'react';
 
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
 import { EditOwnerForm } from './owner-edit-form';
 interface UserEditDialogProps {
   owner: Owner;
   onUpdate: (data: Partial<Owner>) => Promise<void>;
+  onResOwner: () => void;
 }
 
-export const OwnerEditDialog = ({ owner, onUpdate }: UserEditDialogProps) => {
+export const OwnerEditDialog = ({ owner, onUpdate, onResOwner }: UserEditDialogProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -24,8 +25,10 @@ export const OwnerEditDialog = ({ owner, onUpdate }: UserEditDialogProps) => {
         </Button>
       </DialogTrigger>
       <DialogContent>
+        <DialogTitle>Изменить владельца</DialogTitle>
         <EditOwnerForm
           owner={owner}
+          onResOwner={onResOwner}
           onSubmit={async (data) => {
             await onUpdate(data);
             setIsOpen(false);

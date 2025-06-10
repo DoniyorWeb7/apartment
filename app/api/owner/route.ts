@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const owner = await prisma.owner.findMany({
     orderBy: {
-      id: 'asc',
+      id: 'desc',
     },
   });
   return NextResponse.json(owner);

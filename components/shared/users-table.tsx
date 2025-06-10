@@ -45,94 +45,6 @@ export interface CustomColumnMeta {
   options?: { label: string; value: string }[];
 }
 
-export const columns: ColumnDef<User>[] = [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    meta: { filterVariant: 'text' },
-    cell: ({ row }) => <div className="uppercase">{row.getValue('id')}</div>,
-  },
-  {
-    accessorKey: 'username',
-    meta: { filterVariant: 'text' },
-    header: 'Псевдоним',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('username')}</div>,
-  },
-  {
-    accessorKey: 'fullName',
-    meta: { filterVariant: 'text' },
-    header: 'Имя',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('fullName')}</div>,
-  },
-
-  {
-    accessorKey: 'phone',
-    meta: { filterVariant: 'text' },
-    header: 'Номер телефона',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('phone')}</div>,
-  },
-  {
-    accessorKey: 'passport',
-    meta: { filterVariant: 'text' },
-    header: 'Номер пасспорт',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('passport')}</div>,
-  },
-  {
-    accessorKey: 'availabilityPas',
-    meta: { filterVariant: 'text' },
-    header: 'Дата создания пасспорта',
-    cell: ({ row }) => {
-      const value = row.getValue('availabilityPas') as string;
-      const formatted = new Intl.DateTimeFormat('ru-RU').format(new Date(value));
-      return <div className="capitalize">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: 'createAt',
-    meta: { filterVariant: 'text' },
-    header: 'Дата создания',
-    cell: ({ row }) => {
-      const value = row.getValue('createAt') as string;
-      const formatted = new Intl.DateTimeFormat('ru-RU').format(new Date(value));
-      return <div className="capitalize">{formatted}</div>;
-    },
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      const user = row.original;
-
-      const handleUpdate = async (data: Partial<User>) => {
-        try {
-          await userUpdate(user.id, data);
-          toast.success('Пользователь изменен');
-        } catch (error) {
-          toast.error('Ошибка при изменения пользователя');
-          console.error('Ошибка при обновлении пользователя:', error);
-        }
-      };
-
-      const handleDelete = async (userId: number) => {
-        try {
-          await deleteUser(userId);
-          toast.success('Пользователь Удален');
-        } catch (error) {
-          toast.error('Ошибка при удаление пользователя');
-          console.error('Failed to delete user:', error);
-        }
-      };
-
-      return (
-        <div className="flex gap-2">
-          <DeleteButton userId={user.id} onDelete={handleDelete} />
-          <UserEditDialog user={user} onUpdate={handleUpdate} />
-        </div>
-      );
-    },
-  },
-];
-
 export function UsersTable() {
   const [data, setData] = React.useState<User[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -156,6 +68,94 @@ export function UsersTable() {
   React.useEffect(() => {
     fetchUsers();
   }, []);
+
+  const columns: ColumnDef<User>[] = [
+    {
+      accessorKey: 'id',
+      header: 'ID',
+      meta: { filterVariant: 'text' },
+      cell: ({ row }) => <div className="uppercase">{row.getValue('id')}</div>,
+    },
+    {
+      accessorKey: 'username',
+      meta: { filterVariant: 'text' },
+      header: 'Псевдоним',
+      cell: ({ row }) => <div className="capitalize">{row.getValue('username')}</div>,
+    },
+    {
+      accessorKey: 'fullName',
+      meta: { filterVariant: 'text' },
+      header: 'Имя',
+      cell: ({ row }) => <div className="capitalize">{row.getValue('fullName')}</div>,
+    },
+
+    {
+      accessorKey: 'phone',
+      meta: { filterVariant: 'text' },
+      header: 'Номер телефона',
+      cell: ({ row }) => <div className="capitalize">{row.getValue('phone')}</div>,
+    },
+    {
+      accessorKey: 'passport',
+      meta: { filterVariant: 'text' },
+      header: 'Номер пасспорт',
+      cell: ({ row }) => <div className="capitalize">{row.getValue('passport')}</div>,
+    },
+    {
+      accessorKey: 'availabilityPas',
+      meta: { filterVariant: 'text' },
+      header: 'Дата создания пасспорта',
+      cell: ({ row }) => {
+        const value = row.getValue('availabilityPas') as string;
+        const formatted = new Intl.DateTimeFormat('ru-RU').format(new Date(value));
+        return <div className="capitalize">{formatted}</div>;
+      },
+    },
+    {
+      accessorKey: 'createAt',
+      meta: { filterVariant: 'text' },
+      header: 'Дата создания',
+      cell: ({ row }) => {
+        const value = row.getValue('createAt') as string;
+        const formatted = new Intl.DateTimeFormat('ru-RU').format(new Date(value));
+        return <div className="capitalize">{formatted}</div>;
+      },
+    },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        const user = row.original;
+
+        const handleUpdate = async (data: Partial<User>) => {
+          try {
+            await userUpdate(user.id, data);
+            toast.success('Пользователь изменен');
+          } catch (error) {
+            toast.error('Ошибка при изменения пользователя');
+            console.error('Ошибка при обновлении пользователя:', error);
+          }
+        };
+
+        const handleDelete = async (userId: number) => {
+          try {
+            await deleteUser(userId);
+            toast.success('Пользователь Удален');
+          } catch (error) {
+            toast.error('Ошибка при удаление пользователя');
+            console.error('Failed to delete user:', error);
+          }
+        };
+
+        return (
+          <div className="flex gap-2">
+            <DeleteButton onResData={fetchUsers} userId={user.id} onDelete={handleDelete} />
+            <UserEditDialog onResUser={fetchUsers} user={user} onUpdate={handleUpdate} />
+          </div>
+        );
+      },
+    },
+  ];
 
   const table = useReactTable({
     data,

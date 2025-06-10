@@ -1,91 +1,14 @@
-// 'use client';
-
-// import React from 'react';
-// import { useForm } from 'react-hook-form';
-// import { Button } from '@/components/ui/button';
-// import { Input } from '@/components/ui/input';
-// import type { Apartment } from '@prisma/client';
-
-// interface EditApartmentFormProps {
-//   apartment: Apartment;
-//   onSubmit: (data: Partial<Apartment>) => Promise<void>;
-//   onCancel: () => void;
-// }
-
-// export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartmentFormProps) => {
-//   const { register, handleSubmit } = useForm<
-//     Omit<Partial<Apartment>, 'availability'> & { availability?: string }
-//   >({
-//     defaultValues: {
-//       status: apartment.status,
-//       availability: apartment.availability?.toString().slice(0, 10),
-//       price: apartment.price,
-//       district: apartment.district,
-//       adress: apartment.adress,
-//       room: apartment.room,
-//       floor: apartment.floor,
-//       floorBuild: apartment.floorBuild,
-//       square: apartment.square,
-//       variant: apartment.variant,
-//       description: apartment.description,
-//       owner: apartment.owner,
-//     },
-//   });
-
-//   const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-//   return (
-//     <form
-//       onSubmit={handleSubmit(async (data) => {
-//         setIsSubmitting(true);
-//         try {
-//           const transformed: Partial<Apartment> = {
-//             ...data,
-//             availability: data.availability ? new Date(data.availability) : undefined,
-//           };
-//           await onSubmit(transformed);
-//         } finally {
-//           setIsSubmitting(false);
-//         }
-//       })}
-//       className="space-y-4">
-//       <Input {...register('status')} placeholder="Статус" />
-//       <Input {...register('availability')} type="date" />
-//       <Input {...register('price')} type="number" placeholder="Цена" />
-//       <Input {...register('district')} placeholder="Район" />
-//       <Input {...register('adress')} placeholder="Адрес" />
-//       <Input {...register('room')} type="number" placeholder="Комнаты" />
-//       <Input {...register('floor')} type="number" placeholder="Этаж" />
-//       <Input {...register('floorBuild')} type="number" placeholder="Этажей в доме" />
-//       <Input {...register('square')} type="number" placeholder="Площадь" />
-//       <Input {...register('variant')} placeholder="Вариант" />
-//       <Input {...register('description')} placeholder="Описание" />
-//       <Input {...register('owner')} placeholder="Владелец" />
-
-//       <div className="flex justify-end gap-2">
-//         <Button type="button" variant="outline" onClick={onCancel}>
-//           Отмена
-//         </Button>
-//         <Button type="submit" disabled={isSubmitting}>
-//           {isSubmitting ? 'Сохраняется...' : 'Сохранить изменения'}
-//         </Button>
-//       </div>
-//     </form>
-//   );
-// };
-
 'use client';
 
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import type { Apartment } from '@prisma/client';
+import type { Apartment, Owner } from '@prisma/client';
 import { SelectInput } from './select-input';
 import { DateInput } from './date-input';
 import { ImageUploadInput } from './image-upload-input';
 import { FormInputBlock } from './form-input-block';
 import { Textarea } from '../ui/textarea';
-import { User } from '@prisma/client';
 import { Api } from '@/services/api-client';
 import toast from 'react-hot-toast';
 
@@ -99,14 +22,14 @@ export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartme
   const [images, setImages] = React.useState<File[]>([]);
   const [cover, setCover] = React.useState<File | null>(null);
   const [date, setDate] = React.useState<Date | undefined>(new Date(apartment.availability));
-  const [users, setUsers] = React.useState<User[]>([]);
+  const [owner, setOwner] = React.useState<Owner[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const users = await Api.users.getAll();
-        setUsers(users);
+        const owner = await Api.owners.getAll();
+        setOwner(owner);
       } catch (error) {
         console.error(error);
       }
@@ -148,9 +71,9 @@ export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartme
     { label: 'Учтепинский', value: 'Учтепинский' },
   ];
 
-  const userOptions = users.map((user) => ({
-    label: user.username,
-    value: user.username,
+  const ownerOptions = owner.map((owner) => ({
+    label: `${owner.fullName} ${owner.phone}`,
+    value: owner.phone,
   }));
 
   // const variantOptions = [
@@ -253,7 +176,7 @@ export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartme
             nameLabel="Выберите владельца"
             valueInput={field.value}
             onChange={field.onChange}
-            options={userOptions}
+            options={ownerOptions}
           />
         )}
       />

@@ -9,9 +9,10 @@ interface EditUserFormProps {
   owner: Owner;
   onSubmit: (data: Partial<Owner>) => Promise<void>;
   onCancel: () => void;
+  onResOwner: () => void;
 }
 
-export const EditOwnerForm = ({ owner, onSubmit, onCancel }: EditUserFormProps) => {
+export const EditOwnerForm = ({ owner, onSubmit, onCancel, onResOwner }: EditUserFormProps) => {
   const { register, handleSubmit } = useForm<Partial<Owner>>({
     defaultValues: {
       fullName: owner.fullName,
@@ -27,6 +28,7 @@ export const EditOwnerForm = ({ owner, onSubmit, onCancel }: EditUserFormProps) 
         setIsSubmitting(true);
         try {
           await onSubmit(data);
+          onResOwner();
         } finally {
           setIsSubmitting(false);
         }

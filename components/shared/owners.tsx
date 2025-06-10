@@ -45,83 +45,6 @@ export interface CustomColumnMeta {
   options?: { label: string; value: string }[];
 }
 
-export const columns: ColumnDef<Owner>[] = [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    meta: { filterVariant: 'text' },
-    cell: ({ row }) => <div className="uppercase">{row.getValue('id')}</div>,
-  },
-  {
-    accessorKey: 'fullName',
-    meta: { filterVariant: 'text' },
-    header: 'Имя',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('fullName')}</div>,
-  },
-  {
-    accessorKey: 'phone',
-    meta: { filterVariant: 'text' },
-    header: 'Номер',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('phone')}</div>,
-  },
-
-  {
-    accessorKey: 'createAt',
-    meta: { filterVariant: 'text' },
-    header: 'Дата создание',
-    cell: ({ row }) => {
-      const value = row.getValue('createAt') as string;
-      const formatted = new Intl.DateTimeFormat('ru-RU').format(new Date(value));
-      return <div className="capitalize">{formatted}</div>;
-    },
-  },
-
-  {
-    accessorKey: 'updataAt',
-    meta: { filterVariant: 'text' },
-    header: 'Дата обновление',
-    cell: ({ row }) => {
-      const value = row.getValue('updataAt') as string;
-      const formatted = new Intl.DateTimeFormat('ru-RU').format(new Date(value));
-      return <div className="capitalize">{formatted}</div>;
-    },
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      const owner = row.original;
-
-      const handleUpdate = async (data: Partial<Owner>) => {
-        try {
-          await ownerUpdate(owner.id, data);
-          toast.success('Пользователь изменен');
-        } catch (error) {
-          toast.error('Ошибка при изменения пользователя');
-          console.error('Ошибка при обновлении пользователя:', error);
-        }
-      };
-
-      const handleDelete = async (ownerId: number) => {
-        try {
-          await OwnerDelete(ownerId);
-          toast.success('Пользователь Удален');
-        } catch (error) {
-          toast.error('Ошибка при удаление пользователя');
-          console.error('Failed to delete user:', error);
-        }
-      };
-
-      return (
-        <div className="flex gap-2">
-          <DeleteButton userId={owner.id} onDelete={handleDelete} />
-          <OwnerEditDialog owner={owner} onUpdate={handleUpdate} />
-        </div>
-      );
-    },
-  },
-];
-
 export function OwnerTable() {
   const [data, setData] = React.useState<Owner[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -145,6 +68,83 @@ export function OwnerTable() {
   React.useEffect(() => {
     fetchOwner();
   }, []);
+
+  const columns: ColumnDef<Owner>[] = [
+    {
+      accessorKey: 'id',
+      header: 'ID',
+      meta: { filterVariant: 'text' },
+      cell: ({ row }) => <div className="uppercase">{row.getValue('id')}</div>,
+    },
+    {
+      accessorKey: 'fullName',
+      meta: { filterVariant: 'text' },
+      header: 'Имя',
+      cell: ({ row }) => <div className="capitalize">{row.getValue('fullName')}</div>,
+    },
+    {
+      accessorKey: 'phone',
+      meta: { filterVariant: 'text' },
+      header: 'Номер',
+      cell: ({ row }) => <div className="capitalize">{row.getValue('phone')}</div>,
+    },
+
+    {
+      accessorKey: 'createAt',
+      meta: { filterVariant: 'text' },
+      header: 'Дата создание',
+      cell: ({ row }) => {
+        const value = row.getValue('createAt') as string;
+        const formatted = new Intl.DateTimeFormat('ru-RU').format(new Date(value));
+        return <div className="capitalize">{formatted}</div>;
+      },
+    },
+
+    {
+      accessorKey: 'updataAt',
+      meta: { filterVariant: 'text' },
+      header: 'Дата обновление',
+      cell: ({ row }) => {
+        const value = row.getValue('updataAt') as string;
+        const formatted = new Intl.DateTimeFormat('ru-RU').format(new Date(value));
+        return <div className="capitalize">{formatted}</div>;
+      },
+    },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        const owner = row.original;
+
+        const handleUpdate = async (data: Partial<Owner>) => {
+          try {
+            await ownerUpdate(owner.id, data);
+            toast.success('Пользователь изменен');
+          } catch (error) {
+            toast.error('Ошибка при изменения пользователя');
+            console.error('Ошибка при обновлении пользователя:', error);
+          }
+        };
+
+        const handleDelete = async (ownerId: number) => {
+          try {
+            await OwnerDelete(ownerId);
+            toast.success('Пользователь Удален');
+          } catch (error) {
+            toast.error('Ошибка при удаление пользователя');
+            console.error('Failed to delete user:', error);
+          }
+        };
+
+        return (
+          <div className="flex gap-2">
+            <DeleteButton onResData={fetchOwner} userId={owner.id} onDelete={handleDelete} />
+            <OwnerEditDialog onResOwner={fetchOwner} owner={owner} onUpdate={handleUpdate} />
+          </div>
+        );
+      },
+    },
+  ];
 
   const table = useReactTable({
     data,

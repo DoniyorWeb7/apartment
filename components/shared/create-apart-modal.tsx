@@ -341,10 +341,7 @@ export const CreateApartModal: React.FC<Props> = ({ onApartAdded }) => {
             <div className="grid w-full gap-3">
               <Label htmlFor="message">Описание</Label>
               <Textarea
-                {...register('description', {
-                  required: 'Введите описание',
-                  minLength: { value: 10, message: 'Минимум 10 символов' },
-                })}
+                {...register('description')}
                 placeholder="Введите здесь свое описание."
                 id="message"
               />

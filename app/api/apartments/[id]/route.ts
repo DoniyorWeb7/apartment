@@ -49,8 +49,6 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-
-
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
@@ -110,8 +108,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         console.error('Ошибка загрузки обложки:', error);
         // Можно добавить обработку ошибки (например, toast.notify)
       }
-    } else if (coverImage === null) {
-      // Если передано явное null - очищаем обложку
+    } else if (formData.has('cover') && coverImage === null) {
+      // Пользователь явно отправил пустое поле cover — значит хочет удалить
       updateData.coverImage = null;
     }
 
@@ -153,7 +151,15 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     // Если cover явное null — очистить
-    if (coverImage === null) {
+    // if (coverImage === null) {
+    //   updateData.coverImage = null;
+    // }
+
+    // if (coverImage !== null) {
+    //   formData.append('cover', coverImage);
+    // }
+    else if (formData.has('cover') && coverImage === null) {
+      // Пользователь явно отправил пустое поле cover — значит хочет удалить
       updateData.coverImage = null;
     }
 

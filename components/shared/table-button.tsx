@@ -13,10 +13,10 @@ interface Props {
   className?: string;
   apartId: number;
   apart: Apartment;
-  onEditedApart: () => void;
+  onResApart: () => void;
 }
 
-export const TableButton: React.FC<Props> = ({ apartId, apart, onEditedApart }) => {
+export const TableButton: React.FC<Props> = ({ apartId, apart, onResApart }) => {
   const { data: session } = useSession();
   const handleUpdate = async (
     data: Partial<Apartment> & {
@@ -27,7 +27,7 @@ export const TableButton: React.FC<Props> = ({ apartId, apart, onEditedApart }) 
     try {
       await apartUpdata(apart.id, data);
       toast.success('Пользователь изменен');
-      onEditedApart();
+      onResApart();
     } catch (error) {
       toast.error('Ошибка при изменения пользователя');
       console.error('Ошибка при обновлении пользователя:', error);
@@ -37,6 +37,7 @@ export const TableButton: React.FC<Props> = ({ apartId, apart, onEditedApart }) 
     try {
       await ApartDelete(apartId);
       toast.success('Пользователь Удален');
+      onResApart();
     } catch (error) {
       toast.error('Ошибка при удаление пользователя');
       console.error('Failed to delete user:', error);

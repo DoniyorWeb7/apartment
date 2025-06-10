@@ -24,6 +24,7 @@ import { SaleApartCreate } from '@/services/sale-apart';
 
 interface Props {
   className?: string;
+  onAddedApart: () => void;
 }
 
 export interface MyForm {
@@ -41,7 +42,7 @@ export interface MyForm {
   price?: number;
 }
 
-export const SaleCreateApartModal: React.FC<Props> = ({}) => {
+export const SaleCreateApartModal: React.FC<Props> = ({ onAddedApart }) => {
   const [images, setImages] = React.useState<File[]>([]);
   const [cover, setCover] = React.useState<File | null>(null);
   const [date, setDate] = React.useState<Date>();
@@ -126,6 +127,7 @@ export const SaleCreateApartModal: React.FC<Props> = ({}) => {
       setIsLoading(true);
       const res = await SaleApartCreate.create(formData);
       toast.success('Квартира успешно создана! ID: ' + res.data.id);
+      onAddedApart();
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
       toast.error('Ошибка при отправке данных');
@@ -354,10 +356,7 @@ export const SaleCreateApartModal: React.FC<Props> = ({}) => {
             <div className="grid w-full gap-3">
               <Label htmlFor="message">Описание</Label>
               <Textarea
-                {...register('description', {
-                  required: 'Введите описание',
-                  minLength: { value: 10, message: 'Минимум 10 символов' },
-                })}
+                {...register('description')}
                 placeholder="Введите здесь свое описание."
                 id="message"
               />

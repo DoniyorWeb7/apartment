@@ -3,7 +3,11 @@ import { Role } from '@prisma/client';
 import { hash } from 'bcryptjs';
 import { NextResponse } from 'next/server';
 export async function GET() {
-  const user = await prisma.user.findMany();
+  const user = await prisma.user.findMany({
+    orderBy: {
+      id: 'desc',
+    },
+  });
   return NextResponse.json(user);
 }
 
