@@ -60,6 +60,7 @@
     "swiper": "^11.2.8",
     "tailwind-merge": "^3.3.0",
     "ts-node": "^10.9.2",
+    "use-mask-input": "^3.4.2",
     "zod": "^3.25.27"
   },
   "devDependencies": {

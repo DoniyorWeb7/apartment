@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { id, price, district, adress, room, floor, floorBuild, square, images, phone } = body;
+    const { id, price, district, adress, room, floor, floorBuild, square, images } = body;
 
     // Формируем текст сообщения с Markdown
     const message = `
@@ -30,9 +30,8 @@ export async function POST(req: Request) {
   🔹*Этаж:* ${floor}
   🔹*Этажность:* ${floorBuild}
   🔹*Площадь:* ${square} м² \n
-  💰*Цена:* ${price}\\$
-  🔹*Phone:* ${phone} \n
-  
+  💰*Цена:* ${price}\\$ \n
+   @myproperty\\_uzb
     `.trim();
 
     // Если есть изображения - отправляем как медиагруппу с подписью

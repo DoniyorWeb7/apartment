@@ -5,7 +5,9 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 function escapeMarkdown(text: string) {
-  return text.replace(/[_*[\]()~`>#+-=|{}.!]/g, '\\$&');
+  if (!text) return '';
+  // Экранируем все специальные символы MarkdownV2 и знак +
+  return text.toString().replace(/[_*[\]()~`>#+-=|{}.!+]/g, '\\$&');
 }
 
 export async function POST(req: Request) {
@@ -20,7 +22,7 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const { id, price, district, adress, room, floor, floorBuild, square, images, phone } = body;
-
+    console.log(body);
     // Формируем текст сообщения с Markdown
     const message = `
       Сдается в аренду квартира *\\#${id}*\n
@@ -30,8 +32,9 @@ export async function POST(req: Request) {
   🔹*Этаж:* ${floor}
   🔹*Этажность:* ${floorBuild}
   🔹*Площадь:* ${square} м² \n
-  💰*Цена:* ${price}\\$
-  🔹*Phone:* ${phone} \n
+  💰*Цена:* ${price}\\$ \n
+  📞*Телефон:* ${escapeMarkdown(phone)} \n
+  @myproperty\\_uzb
   
     `.trim();
 

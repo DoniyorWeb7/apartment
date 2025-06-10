@@ -298,7 +298,7 @@ export const CreateApartModal: React.FC<Props> = ({ onApartAdded }) => {
               })}
               label="Площадь"
               id="square"
-              type="text"
+              type="number"
               placeholder="Площадь"
               error={errors.square?.message}
             />
@@ -353,12 +353,18 @@ export const CreateApartModal: React.FC<Props> = ({ onApartAdded }) => {
             <FormInputBlock
               {...register('price', {
                 required: 'Поле объязательно',
+                valueAsNumber: true,
+                validate: (value) => /^\d+$/.test(String(value)) || 'Только цифры',
               })}
               label="Цена"
               id="price"
               type="text"
               placeholder="Цена"
               error={errors.price?.message}
+              onInput={(e) => {
+                const input = e.target as HTMLInputElement;
+                input.value = input.value.replace(/\D/g, '');
+              }}
             />
 
             <DateInput date={date} setDate={setDate} />

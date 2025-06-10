@@ -16,6 +16,8 @@ import { FormInputBlock } from './form-input-block';
 import { OwnerCreate } from '@/services/owners';
 import toast from 'react-hot-toast';
 
+import { useHookFormMask } from 'use-mask-input';
+
 interface Props {
   className?: string;
   onAddedOwner: () => void;
@@ -54,6 +56,7 @@ export const CreateOwnerModal: React.FC<Props> = ({ onAddedOwner }) => {
     }
   };
 
+  const registerWithMask = useHookFormMask(register);
   return (
     <Dialog>
       <DialogTrigger
@@ -82,13 +85,13 @@ export const CreateOwnerModal: React.FC<Props> = ({ onAddedOwner }) => {
             />
 
             <FormInputBlock
-              {...register('phone', {
-                required: 'Поле объязательно',
+              {...registerWithMask('phone', ['+999 99 999-99-99'], {
+                required: true,
               })}
               label="Номер телефона"
               id="fullName"
               type="text"
-              placeholder="Номер телефона владельца"
+              placeholder="+998 99 123 45 67"
               error={errors.phone?.message}
             />
 

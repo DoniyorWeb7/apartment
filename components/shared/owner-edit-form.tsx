@@ -4,6 +4,7 @@ import { Owner } from '@prisma/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import React from 'react';
+import { useHookFormMask } from 'use-mask-input';
 
 interface EditUserFormProps {
   owner: Owner;
@@ -19,6 +20,7 @@ export const EditOwnerForm = ({ owner, onSubmit, onCancel, onResOwner }: EditUse
       phone: owner.phone,
     },
   });
+  const registerWithMask = useHookFormMask(register);
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -35,7 +37,7 @@ export const EditOwnerForm = ({ owner, onSubmit, onCancel, onResOwner }: EditUse
       })}
       className="space-y-4">
       <Input {...register('fullName')} />
-      <Input {...register('phone')} />
+      <Input {...registerWithMask('phone', '+999 99 999-99-99')} />
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onCancel}>

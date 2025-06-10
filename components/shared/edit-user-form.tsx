@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Label } from '../ui/label';
+import { useHookFormMask } from 'use-mask-input';
 
 interface EditUserFormProps {
   user: User;
@@ -25,6 +26,7 @@ export const EditUserForm = ({ user, onSubmit, onCancel, onResUser }: EditUserFo
   });
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const registerWithMask = useHookFormMask(register);
 
   return (
     <form
@@ -43,7 +45,7 @@ export const EditUserForm = ({ user, onSubmit, onCancel, onResUser }: EditUserFo
       <Label htmlFor="fullName">Имя</Label>
       <Input id="fullName" {...register('fullName')} />
       <Label htmlFor="phone">Телефон</Label>
-      <Input id="phone" {...register('phone')} />
+      <Input id="phone" {...registerWithMask('phone', ['+999 99 999-99-99'])} />
       <Label htmlFor="passport">Пасспорт</Label>
       <Input id="passport" {...register('passport')} />
 

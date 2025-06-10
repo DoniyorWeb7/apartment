@@ -9,6 +9,7 @@ import { apartUpdata } from '@/services/apart-update';
 import { Apartment } from '@prisma/client';
 import { ApartEditDialog } from './apart-edit-dialog';
 import { SendTelegramBtn } from './send-telegram-btn';
+import { SendTelegramBtnWithPhone } from './send-telegram-btn-with-phone';
 interface Props {
   className?: string;
   apartId: number;
@@ -70,6 +71,21 @@ export const TableButton: React.FC<Props> = ({ apartId, apart, onResApart }) => 
               floor: apart.floor,
               floorBuild: apart.floorBuild,
               square: apart.square,
+              images: apart.images as string[], // Приведение типа
+            }}
+          />
+
+          <SendTelegramBtnWithPhone
+            apartment={{
+              id: apart.id,
+              price: apart.price,
+              district: apart.district,
+              adress: apart.adress,
+              room: apart.room,
+              floor: apart.floor,
+              floorBuild: apart.floorBuild,
+              square: apart.square,
+              phone: apart.owner,
               images: apart.images as string[], // Приведение типа
             }}
           />

@@ -18,6 +18,7 @@ import { DateInput } from './date-input';
 import { RadioSelect } from './radio-select';
 import { UserCreate } from '@/services/users';
 import toast from 'react-hot-toast';
+import { useHookFormMask } from 'use-mask-input';
 
 interface Props {
   className?: string;
@@ -94,6 +95,7 @@ export const CreateUserModal: React.FC<Props> = ({ onUserAdded }) => {
       setIsLoading(false);
     }
   };
+  const registerWithMask = useHookFormMask(register);
 
   return (
     <Dialog>
@@ -156,7 +158,7 @@ export const CreateUserModal: React.FC<Props> = ({ onUserAdded }) => {
             />
 
             <FormInputBlock
-              {...register('phone', {
+              {...registerWithMask('phone', ['+999 99 999-99-99'], {
                 required: 'Поле объязательно',
               })}
               label="Номер телефон"

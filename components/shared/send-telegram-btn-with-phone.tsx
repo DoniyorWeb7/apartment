@@ -11,6 +11,7 @@ type ApartmenTg = {
   floor: number;
   floorBuild: number;
   square: number;
+  phone?: string;
   images?: string[]; // Изменили тип на массив строк
 };
 
@@ -19,7 +20,7 @@ interface Props {
   apartment: ApartmenTg;
 }
 
-export const SendTelegramBtn: React.FC<Props> = ({ className, apartment }) => {
+export const SendTelegramBtnWithPhone: React.FC<Props> = ({ className, apartment }) => {
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState<boolean | null>(null);
   console.log(apartment);
@@ -40,7 +41,7 @@ export const SendTelegramBtn: React.FC<Props> = ({ className, apartment }) => {
         images: imagesArray,
       };
 
-      const res = await axios.post('/api/telegram/withoutPhoneNumber', payload);
+      const res = await axios.post('/api/telegram/withPhoneNumber', payload);
 
       if (res.data.success) {
         setSuccess(true);
@@ -73,7 +74,7 @@ export const SendTelegramBtn: React.FC<Props> = ({ className, apartment }) => {
           <span className="animate-spin">↻</span>
         </span>
       ) : (
-        'T'
+        '📞'
       )}
     </button>
   );
