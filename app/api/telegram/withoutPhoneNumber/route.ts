@@ -2,7 +2,7 @@ import axios from 'axios';
 import { NextResponse } from 'next/server';
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const CHAT_ID = process.env.CHAT_ID_WITHOUT_PHONE;
 
 function escapeMarkdown(text: string) {
   return text.replace(/[_*[\]()~`>#+-=|{}.!]/g, '\\$&');
