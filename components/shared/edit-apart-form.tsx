@@ -59,16 +59,18 @@ export const EditApartmentForm = ({ apartment, onSubmit, onCancel }: EditApartme
   });
 
   const districtOptions = [
-    { label: 'Алмазарский', value: 'Алмазарский' },
-    { label: 'Бектемирский', value: 'Бектемирский' },
-    { label: 'Мирабадский', value: 'Мирабадский' },
-    { label: 'Мирзо-Улугбекский', value: 'Мирзо-Улугбекский' },
-    { label: 'Сергелийский', value: 'Сергелийский' },
-    { label: 'Чиланзарский', value: 'Чиланзарский' },
-    { label: 'Шайхантаурский', value: 'Шайхантаурский' },
-    { label: 'Юнусабадский', value: 'Юнусабадский' },
-    { label: 'Яшнабадский', value: 'Яшнабадский' },
-    { label: 'Учтепинский', value: 'Учтепинский' },
+    { label: 'Все', value: '' },
+    { label: 'Алмазар', value: 'Алмазар' },
+    { label: 'Бектемир ', value: 'Бектемир' },
+    { label: 'Мирабад', value: 'Мирабад' },
+    { label: 'Мирзо-Улугбек', value: 'Мирзо-Улугбек' },
+    { label: 'Сергели', value: 'Сергели' },
+    { label: 'Чиланзар', value: 'Чиланзар' },
+    { label: 'Шайхантаур', value: 'Шайхантаур' },
+    { label: 'Юнусабад', value: 'Юнусабад' },
+    { label: 'Яккасарай', value: 'Яккасарай' },
+    { label: 'Яшнабад', value: 'Яшнабад' },
+    { label: 'Учтепа', value: 'Учтепа' },
   ];
 
   const ownerOptions = owner.map((owner) => ({

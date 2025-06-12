@@ -3,6 +3,7 @@ import * as React from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
+  // Row,
   SortingState,
   VisibilityState,
   flexRender,
@@ -111,6 +112,20 @@ export function ApartTable() {
     fetchOwners();
     fetchApart();
   }, []);
+
+  // const priceBetweenFilter = (
+  //   row: Row<any>,
+  //   columnId: string,
+  //   filterValue: { min?: number; max?: number },
+  // ) => {
+  //   const price = row.getValue(columnId);
+
+  //   const min = filterValue.min ?? 0;
+  //   const max = filterValue.max ?? Infinity;
+
+  //   return price >= min && price <= max;
+  // };
+
   const columns: ColumnDef<ApartmentWithUser>[] = [
     {
       accessorKey: 'id',
@@ -185,6 +200,7 @@ export function ApartTable() {
     {
       accessorKey: 'price',
       meta: { filterVariant: 'number' },
+      // filterFn: priceBetweenFilter,
       header: 'Цена',
       cell: ({ row }) => {
         const price = parseFloat(row.getValue('price'));
@@ -207,17 +223,17 @@ export function ApartTable() {
         filterVariant: 'select',
         options: [
           { label: 'Все', value: '' },
-          { label: 'Алмазарский', value: 'Алмазарский' },
-          { label: 'Бектемирский ', value: 'Бектемирский' },
-          { label: 'Мирабадский', value: 'Мирабадский' },
-          { label: 'Мирзо-Улугбекский', value: 'Мирзо-Улугбекский' },
-          { label: 'Сергелийский', value: 'Сергелийский' },
-          { label: 'Чиланзарский', value: 'Чиланзарский' },
-          { label: 'Шайхантаурский', value: 'Шайхантаурский' },
-          { label: 'Юнусабадский', value: 'Юнусабадский' },
-          { label: 'Яккасарайский', value: 'Яккасарайский' },
-          { label: 'Яшнабадский', value: 'Яшнабадский' },
-          { label: 'Учтепинский', value: 'Учтепинский' },
+          { label: 'Алмазар', value: 'Алмазар' },
+          { label: 'Бектемир ', value: 'Бектемир' },
+          { label: 'Мирабад', value: 'Мирабад' },
+          { label: 'Мирзо-Улугбек', value: 'Мирзо-Улугбек' },
+          { label: 'Сергели', value: 'Сергели' },
+          { label: 'Чиланзар', value: 'Чиланзар' },
+          { label: 'Шайхантаур', value: 'Шайхантаур' },
+          { label: 'Юнусабад', value: 'Юнусабад' },
+          { label: 'Яккасарай', value: 'Яккасарай' },
+          { label: 'Яшнабад', value: 'Яшнабад' },
+          { label: 'Учтепа', value: 'Учтепа' },
         ],
       },
       header: 'Район',
@@ -448,3 +464,32 @@ export function ApartTable() {
     </div>
   );
 }
+
+// : column.columnDef.meta?.filterVariant === 'range' ? (
+//                         <div className="flex gap-2">
+//                           <Input
+//                             placeholder="от"
+//                             type="number"
+//                             value={(column.getFilterValue() as { min?: number })?.min ?? ''}
+//                             onChange={(e) =>
+//                               column.setFilterValue((old: any) => ({
+//                                 ...old,
+//                                 min: e.target.value ? parseFloat(e.target.value) : undefined,
+//                               }))
+//                             }
+//                             className="h-8 w-full"
+//                           />
+//                           <Input
+//                             placeholder="до"
+//                             type="number"
+//                             value={(column.getFilterValue() as { max?: number })?.max ?? ''}
+//                             onChange={(e) =>
+//                               column.setFilterValue((old: any) => ({
+//                                 ...old,
+//                                 max: e.target.value ? parseFloat(e.target.value) : undefined,
+//                               }))
+//                             }
+//                             className="h-8 w-full"
+//                           />
+//                         </div>
+//                       ) :
