@@ -21,7 +21,7 @@ export const EditUserForm = ({ user, onSubmit, onCancel, onResUser }: EditUserFo
       fullName: user.fullName,
       phone: user.phone,
       passport: user.passport,
-      password: user.password,
+      password: '',
     },
   });
 
@@ -48,6 +48,8 @@ export const EditUserForm = ({ user, onSubmit, onCancel, onResUser }: EditUserFo
       <Input id="phone" {...registerWithMask('phone', ['+999 99 999-99-99'])} />
       <Label htmlFor="passport">Пасспорт</Label>
       <Input id="passport" {...register('passport')} />
+      <Label htmlFor="password">Пароль</Label>
+      <Input id="password" {...register('password')} />
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onCancel}>
