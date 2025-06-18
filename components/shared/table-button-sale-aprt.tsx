@@ -9,6 +9,7 @@ import { ApartEditDialog } from './apart-edit-dialog';
 import { SendTelegramBtn } from './send-telegram-btn';
 import { saleApartUpdata } from '@/services/sale-apart-update';
 import { saleApartDelete } from '@/services/sale-apart-delete';
+import { SendTelegramBtnWithPhone } from './send-telegram-btn-with-phone';
 interface Props {
   className?: string;
   apartId: number;
@@ -49,12 +50,12 @@ export const SaleTableButton: React.FC<Props> = ({ apartId, apart, onResApart })
         <div>
           <Button
             variant={'default'}
-            className="bg-red-600 hover:bg-red-800 w-[35px] h-[35px] cursor-pointer"
+            className="bg-blue-600 hover:bg-blue-800 w-[35px] h-[35px] cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               handleDelete(apartId);
             }}>
-            <Trash />
+            <Trash className="text-white" />
           </Button>
         </div>
       )}
@@ -70,6 +71,21 @@ export const SaleTableButton: React.FC<Props> = ({ apartId, apart, onResApart })
               floor: apart.floor,
               floorBuild: apart.floorBuild,
               square: apart.square,
+              images: apart.images as string[], // Приведение типа
+            }}
+          />
+
+          <SendTelegramBtnWithPhone
+            apartment={{
+              id: apart.id,
+              price: apart.price,
+              district: apart.district,
+              adress: apart.adress,
+              room: apart.room,
+              floor: apart.floor,
+              floorBuild: apart.floorBuild,
+              square: apart.square,
+              phone: apart.owner,
               images: apart.images as string[], // Приведение типа
             }}
           />

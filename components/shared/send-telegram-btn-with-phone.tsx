@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Image from 'next/image';
 import React from 'react';
 import toast from 'react-hot-toast';
 
@@ -68,13 +69,15 @@ export const SendTelegramBtnWithPhone: React.FC<Props> = ({ className, apartment
     <button
       onClick={handleClick}
       disabled={loading}
-      className={`bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded disabled:opacity-50 cursor-pointer ${className}`}>
+      className={`bg-blue-500 hover:bg-blue-800 text-white px-3 py-2 rounded-sm disabled:opacity-50 cursor-pointer ${className}`}>
       {loading ? (
         <span className="flex items-center gap-2">
           <span className="animate-spin">↻</span>
         </span>
       ) : (
-        '📞'
+        <span className="flex items-center justify-center gap-1">
+          m <Image src="/tg.png" width={500} height={500} alt="" />
+        </span>
       )}
     </button>
   );

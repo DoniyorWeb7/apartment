@@ -149,7 +149,7 @@ export function ApartTable() {
 
         const statusColorMap: Record<string, string> = {
           Занят: 'bg-red-500',
-          Свободен: 'bg-green-500',
+          Свободен: 'bg-blue-500',
         };
         return (
           <div

@@ -26,10 +26,10 @@ export const ApartEditDialog = ({ apart, onUpdate }: UserEditDialogProps) => {
             e.stopPropagation();
             setIsOpen(true);
           }}
-          className="bg-blue-800 hover:bg-blue-900 cursor-pointer"
+          className="bg-blue-500 hover:bg-blue-800 cursor-pointer"
           variant="default"
           size="icon">
-          <Pencil className="h-4 w-4" />
+          <Pencil className="h-4 w-4 text-white" />
         </Button>
       </DialogTrigger>
       <DialogContent className="h-[600px] overflow-auto" onClick={(e) => e.stopPropagation()}>

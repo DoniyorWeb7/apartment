@@ -50,12 +50,12 @@ export const TableButton: React.FC<Props> = ({ apartId, apart, onResApart }) => 
         <div>
           <Button
             variant={'default'}
-            className="bg-red-600 hover:bg-red-800 w-[35px] h-[35px] cursor-pointer"
+            className="bg-blue-500 hover:bg-blue-800 w-[35px] h-[35px] cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               handleDelete(apartId);
             }}>
-            <Trash />
+            <Trash className="text-white" />
           </Button>
         </div>
       )}
