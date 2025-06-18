@@ -87,6 +87,10 @@ export const CreateOwnerModal: React.FC<Props> = ({ onAddedOwner }) => {
             <FormInputBlock
               {...registerWithMask('phone', ['+999 99 999-99-99'], {
                 required: true,
+                pattern: {
+                  value: /^\+998 \d{2} \d{3}-\d{2}-\d{2}$/,
+                  message: 'Формат должен быть +998 99 123-45-67',
+                },
               })}
               label="Номер телефона"
               id="fullName"

@@ -68,15 +68,15 @@ export const SendTelegramBtn: React.FC<Props> = ({ className, apartment }) => {
     <button
       onClick={handleClick}
       disabled={loading}
-      className={`bg-blue-500 hover:bg-blue-800 text-white px-3 py-2 rounded-sm disabled:opacity-50 cursor-pointer ${className}`}>
+      className={`bg-blue-500 hover:bg-blue-800 text-white px-3 py-2 rounded-sm disabled:opacity-50 cursor-pointer w-[40px] h-[36px]  ${className}`}>
       {loading ? (
-        <span className="flex items-center gap-2">
+        <span className="flex  items-center gap-2">
           <span className="animate-spin">↻</span>
         </span>
       ) : (
-        <span className="flex items-center justify-center gap-1">
+        <div className="flex items-center justify-center gap-1">
           t <Image src="/tg.png" width={500} height={500} alt="" />
-        </span>
+        </div>
       )}
     </button>
   );

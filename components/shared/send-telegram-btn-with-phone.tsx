@@ -69,7 +69,7 @@ export const SendTelegramBtnWithPhone: React.FC<Props> = ({ className, apartment
     <button
       onClick={handleClick}
       disabled={loading}
-      className={`bg-blue-500 hover:bg-blue-800 text-white px-3 py-2 rounded-sm disabled:opacity-50 cursor-pointer ${className}`}>
+      className={`bg-blue-500 hover:bg-blue-800 text-white px-3 py-2 w-[40px] h-[36px]  rounded-sm disabled:opacity-50 cursor-pointer ${className}`}>
       {loading ? (
         <span className="flex items-center gap-2">
           <span className="animate-spin">↻</span>
