@@ -72,6 +72,7 @@ export function SaleApartTable() {
   const [rowSelection, setRowSelection] = React.useState({});
   const [userOptions, setUserOptions] = React.useState<User[]>([]);
   const [ownerOptions, setOwnerOptions] = React.useState<Owner[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const statusOptions = [
     { label: 'Занят', value: 'Занят' },
@@ -98,11 +99,14 @@ export function SaleApartTable() {
   };
 
   const fetchApart = async () => {
+    setIsLoading(true);
     try {
       const aparts = await Api.saleApart.getAll();
       setApart(aparts);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
   React.useEffect(() => {
@@ -422,7 +426,7 @@ export function SaleApartTable() {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  {isLoading ? 'Загрузка...' : 'Нет результат.'}
                 </TableCell>
               </TableRow>
             )}

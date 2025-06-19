@@ -166,11 +166,6 @@ export const CreateApartModal: React.FC<Props> = ({ onApartAdded }) => {
     value: owner.phone,
   }));
 
-  // const variantOptions = [
-  //   { label: 'Предоплата', value: '1' },
-  //   { label: 'Депозит', value: '2' },
-  // ];
-
   const statusOptions = [
     { label: 'Занят', value: 'Занят' },
     { label: 'Свободен', value: 'Свободен' },

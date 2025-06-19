@@ -40,15 +40,15 @@ export const PreviewGallery = ({ images }: Props) => {
 
       {/* Модальное окно */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden">
-          <DialogTitle></DialogTitle>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden ">
+          <DialogTitle className="pt-5 pl-5">Gallery</DialogTitle>
           <Swiper
             initialSlide={startIndex}
             navigation
             pagination={{ clickable: true }}
             keyboard
             modules={[Navigation, Pagination, Keyboard]}
-            className="w-full h-[80vh]">
+            className="w-full h-[70vh]">
             {images.map((img, index) => (
               <SwiperSlide key={index}>
                 <div className="flex justify-center items-center h-full">

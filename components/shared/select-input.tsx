@@ -58,7 +58,9 @@ export const SelectInput: React.FC<Props> = ({
             </Button>
           </PopoverTrigger>
         </div>
-        <PopoverContent className="w-full p-0 pointer-events-auto ">
+        <PopoverContent
+          className="w-full p-0 pointer-events-auto  "
+          onWheel={(e) => e.stopPropagation()}>
           <Command>
             <CommandInput placeholder="Search framework..." className="h-9" />
             <CommandList>
