@@ -24,7 +24,6 @@ export default function LoginPage() {
         redirect: false,
       });
 
-      console.log('SignIn result:', res);
 
       if (res?.error) {
         if (res.error === 'CredentialsSignin') {

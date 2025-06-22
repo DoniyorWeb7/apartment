@@ -23,7 +23,6 @@ interface Props {
 export const SendTelegramBtn: React.FC<Props> = ({ className, apartment }) => {
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState<boolean | null>(null);
-  console.log(apartment);
   const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     try {

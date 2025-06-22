@@ -11,7 +11,6 @@ function escapeMarkdown(text: string) {
 }
 
 export async function POST(req: Request) {
-  console.log(req);
   try {
     if (!TELEGRAM_BOT_TOKEN || !CHAT_ID) {
       return NextResponse.json(
@@ -22,7 +21,6 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const { id, price, district, adress, room, floor, floorBuild, square, images, phone } = body;
-    console.log(body);
     // Формируем текст сообщения с Markdown
     const message = `
       Сдается в аренду квартира *\\#${id}*\n

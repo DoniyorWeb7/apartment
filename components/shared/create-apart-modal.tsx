@@ -43,7 +43,6 @@ export interface MyForm {
 }
 
 export const CreateApartModal: React.FC<Props> = ({ onApartAdded }) => {
-  console.log(onApartAdded);
   const [images, setImages] = React.useState<File[]>([]);
   const [cover, setCover] = React.useState<File | null>(null);
   const [date, setDate] = React.useState<Date>();

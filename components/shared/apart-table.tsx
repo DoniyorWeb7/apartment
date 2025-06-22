@@ -330,6 +330,37 @@ export function ApartTable() {
     },
   });
 
+  const paginationRange = (() => {
+    const totalPages = table.getPageCount();
+    const currentPage = table.getState().pagination.pageIndex;
+
+    const delta = 2; // Соседей вокруг текущей страницы
+    const range: (number | '...')[] = [];
+    range.push(1);
+
+    if (currentPage > delta + 2) {
+      range.push('...');
+    }
+
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
+      range.push(i);
+    }
+
+    if (currentPage < totalPages - delta - 1) {
+      range.push('...');
+    }
+
+    if (totalPages > 1) {
+      range.push(totalPages);
+    }
+
+    return range;
+  })();
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -439,15 +470,21 @@ export function ApartTable() {
           {'<'}
         </Button>
 
-        {Array.from({ length: table.getPageCount() }).map((_, i) => (
-          <Button
-            key={i}
-            variant={i === table.getState().pagination.pageIndex ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => table.setPageIndex(i)}>
-            {i + 1}
-          </Button>
-        ))}
+        {paginationRange.map((page, i) =>
+          page === '...' ? (
+            <span key={i} className="px-2">
+              …
+            </span>
+          ) : (
+            <Button
+              key={`page-${page}`}
+              variant={page === table.getState().pagination.pageIndex + 1 ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => table.setPageIndex((page as number) - 1)}>
+              {page}
+            </Button>
+          ),
+        )}
 
         <Button
           variant="outline"

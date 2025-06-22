@@ -9,7 +9,6 @@ function escapeMarkdown(text: string) {
 }
 
 export async function POST(req: Request) {
-  console.log(req);
   try {
     if (!TELEGRAM_BOT_TOKEN || !CHAT_ID) {
       return NextResponse.json(
